@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Syntax Highlighting */
+.syntax-highlight {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #a1c16b;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
+.syntax-highlight.json {
+  color: #a1c16b;
+}
+
+.syntax-highlight.php-dump {
+  color: #a1c16b;
+  line-height: 1.6;
+}
+
+.syntax-highlight > div {
+  margin: 0;
+  padding: 0;
+}
+
+.syntax-number {
+  color: #ff9470;
+  font-weight: 500;
+}
+
+.syntax-boolean {
+  color: #ff9470;
+  font-weight: 500;
+}
+
+.syntax-null {
+  color: #bd8fd9;
+  font-weight: 500;
+}
+
+.syntax-string {
+  color: #a1c16b;
+}
+
+.syntax-key {
+  color: #7dd3fc;
+}
