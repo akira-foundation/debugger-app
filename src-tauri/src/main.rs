@@ -4,13 +4,9 @@
 mod listener;
 mod logger;
 
-use tauri::Manager;
-use std::sync::Arc;
-use tokio::sync::Mutex;
-
 #[tokio::main]
 async fn main() {
-    let app = tauri::Builder::default()
+    tauri::Builder::default()
         .setup(|app| {
             let app_handle = app.handle().clone();
 

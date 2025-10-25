@@ -63,14 +63,47 @@ pub fn process_log(payload: &str, app: &AppHandle) {
 
     if let Ok(json) = serde_json::from_str::<Value>(payload) {
         if let Some(payloads) = json.get("payloads") {
-            for item in payloads.as_array().unwrap_or(&vec![]) {
+            let empty_vec = vec![];
+            let items = payloads.as_array().unwrap_or(&empty_vec);
+
+            for item in items {
                 let log_type = item
                     .get("type")
                     .and_then(|t| t.as_str())
-                    .unwrap_or("log");
+                    .unwrap_or("log")
+                    .to_lowercase();
 
                 let content = item.get("content").cloned().unwrap_or(Value::Null);
 
+                // Handle label - send to frontend to attach to last log
+                if log_type == "label" {
+                    let label_text = content
+                        .get("label")
+                        .and_then(|c| c.as_str())
+                        .unwrap_or("Unknown");
+
+                    let label_event = json!({
+                        "type": "attach-label",
+                        "label": label_text,
+                    });
+
+                    let _ = app.emit("attach-label", &label_event);
+                    continue;
+                }
+
+                // Handle color - send to frontend to attach to last log
+                if log_type == "color" {
+                    if let Some(color_str) = content.get("color").and_then(|c| c.as_str()) {
+                        let color_event = json!({
+                            "color": color_str,
+                        });
+
+                        let _ = app.emit("attach-color", &color_event);
+                    }
+                    continue;
+                }
+
+                // Regular log - process and attach pending label
                 let origin = item.get("origin");
                 let file = origin
                     .and_then(|o| o.get("file"))
@@ -121,12 +154,20 @@ pub fn process_log(payload: &str, app: &AppHandle) {
                     }
                 }
 
-                let log_entry = json!({
+                // Check if item has explicit color
+                let color = item
+                    .get("color")
+                    .and_then(|c| c.as_str())
+                    .unwrap_or("default")
+                    .to_lowercase();
+
+                let mut log_entry = json!({
                     "id": Uuid::new_v4().to_string(),
                     "timestamp": now,
-                    "type": log_type,
+                    "type": log_type.to_lowercase(),
                     "location": format!("{}:{}", file_clean, line),
                     "content": content_lines,
+                    "color": color,
                 });
 
                 let _ = app.emit("log-entry", &log_entry);

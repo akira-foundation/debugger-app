@@ -8,11 +8,16 @@ interface LogEntry {
   type: string
   location: string
   content: string[]
+  color?: RayColor
+  pending_label?: string
 }
 
 interface ExpandedItems {
   [key: string]: Set<string>
 }
+
+// Ray color types
+type RayColor = 'default' | 'purple' | 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'cyan' | 'pink'
 
 // Syntax highlighter component with JSON support
 function HighlightedLine({ text }: { text: string }) {
@@ -276,24 +281,69 @@ function CollapsibleArray({
   )
 }
 
+const rayColors: Record<RayColor, { bg: string; text: string; hex: string }> = {
+  default: { bg: 'bg-gray-500', text: 'text-gray-300', hex: '#6b7280' },
+  purple: { bg: 'bg-purple-500', text: 'text-purple-300', hex: '#a855f7' },
+  red: { bg: 'bg-red-500', text: 'text-red-300', hex: '#ef4444' },
+  orange: { bg: 'bg-orange-500', text: 'text-orange-300', hex: '#f97316' },
+  yellow: { bg: 'bg-yellow-500', text: 'text-yellow-300', hex: '#eab308' },
+  green: { bg: 'bg-green-500', text: 'text-green-300', hex: '#22c55e' },
+  blue: { bg: 'bg-blue-500', text: 'text-blue-300', hex: '#3b82f6' },
+  cyan: { bg: 'bg-cyan-500', text: 'text-cyan-300', hex: '#06b6d4' },
+  pink: { bg: 'bg-pink-500', text: 'text-pink-300', hex: '#ec4899' },
+}
+
 export default function App() {
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [isListening, setIsListening] = useState(false)
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set())
   const [expandedItems, setExpandedItems] = useState<ExpandedItems>({})
+  const [selectedColor, setSelectedColor] = useState<RayColor | null>(null)
 
   useEffect(() => {
-    const unlisten = listen('log-entry', (event: any) => {
+    const unlistenLog = listen('log-entry', (event: any) => {
       const logEntry: LogEntry = event.payload
       setLogs((prev) => [logEntry, ...prev].slice(0, 100))
     })
 
-    unlisten.then(() => {
+    const unlistenLabel = listen('attach-label', (event: any) => {
+      const { label } = event.payload
+      // Attach label to the first (most recent) log
+      setLogs((prev) => {
+        if (prev.length === 0) return prev
+        const updated = [...prev]
+        updated[0] = {
+          ...updated[0],
+          pending_label: label,
+        }
+        return updated
+      })
+    })
+
+    const unlistenColor = listen('attach-color', (event: any) => {
+      const { color } = event.payload
+      // Attach color to the first (most recent) log
+      setLogs((prev) => {
+        if (prev.length === 0) return prev
+        const updated = [...prev]
+        updated[0] = {
+          ...updated[0],
+          color: color as RayColor,
+        }
+        return updated
+      })
+    })
+
+    Promise.all([unlistenLog, unlistenLabel, unlistenColor]).then(() => {
       setIsListening(true)
     })
 
     return () => {
-      unlisten.then((fn) => fn())
+      Promise.all([unlistenLog, unlistenLabel, unlistenColor]).then(([fn1, fn2, fn3]) => {
+        fn1()
+        fn2()
+        fn3()
+      })
     }
   }, [])
 
@@ -379,17 +429,51 @@ export default function App() {
         </div>
       </header>
 
+      {/* Color filter tabs */}
+      <div className="flex gap-2 px-6 py-3 bg-[#0f0f0f]/50 border-b border-white/5 overflow-x-auto">
+        <button
+          onClick={() => setSelectedColor(null)}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex-shrink-0 ${
+            selectedColor === null
+              ? 'bg-white/20 text-white'
+              : 'bg-white/5 text-gray-400 hover:bg-white/10'
+          }`}
+        >
+          All
+        </button>
+        {Object.entries(rayColors).map(([color, styles]) => (
+          <button
+            key={color}
+            onClick={() => setSelectedColor(color as RayColor)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex-shrink-0 ${styles.bg} ${
+              selectedColor === color ? 'opacity-100 ring-2 ring-white' : 'opacity-60 hover:opacity-80'
+            }`}
+            title={color}
+          />
+        ))}
+      </div>
+
       <div className="flex-1 overflow-y-auto p-5 bg-[#0f0f0f] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
         {logs.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-600 text-sm">
             <p>Waiting for logs...</p>
           </div>
         ) : (
-          [...logs].reverse().map((log) => {
-            const hasMore = shouldShowExpandButton(log.content)
-            const isExpanded = hasMore ? expandedLogs.has(log.id) : true
+          [...logs]
+            .reverse()
+            .filter((log) => {
+              // Always hide 'color' type logs from display
+              if (log.type === 'color') return false
+              // If no color filter selected, show all non-color logs
+              if (!selectedColor) return true
+              // Filter by color
+              return (log.color || 'default') === selectedColor
+            })
+            .map((log) => {
+              const hasMore = shouldShowExpandButton(log.content)
+              const isExpanded = hasMore ? expandedLogs.has(log.id) : true
 
-            return (
+              return (
               <div
                 key={log.id}
                 className="glass card mb-4 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-lg hover:shadow-purple-500/30 backdrop-blur-lg"
@@ -397,17 +481,22 @@ export default function App() {
                 {/* Clickable header to toggle expand */}
                 <button
                   onClick={() => toggleExpanded(log.id)}
-                  className="w-full text-left p-4 hover:bg-black/20 transition-colors flex gap-3 items-center group"
+                  className="w-full text-left p-4 hover:bg-black/20 transition-colors flex gap-3 items-center group flex-wrap"
                 >
                   {hasMore && (
                     <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
                       {isExpanded ? '▼' : '▶'}
                     </span>
                   )}
-                  <div className="flex gap-3 items-center flex-1 text-xs text-gray-400">
+                  <div className="flex gap-3 items-center flex-1 text-xs text-gray-400 flex-wrap w-full">
                     <span className={`px-3 py-1 rounded-full font-semibold text-[11px] ${getLogTypeColor(log.type)} bg-white/5 group-hover:bg-white/10 transition-colors`}>
                       {log.type.toUpperCase()}
                     </span>
+                    {log.pending_label && (
+                      <span className="px-3 py-1 rounded-full font-semibold text-[11px] border border-purple-500/50 text-purple-400 bg-purple-500/10">
+                        {log.pending_label}
+                      </span>
+                    )}
                     <span className="text-gray-600 text-[11px]">{log.location}</span>
                     <span className="ml-auto text-gray-600 text-[11px] font-mono">{log.timestamp}</span>
                   </div>
