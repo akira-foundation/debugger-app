@@ -173,7 +173,9 @@ function parseArrayItems(content: string[]): Array<{ index: string; lines: strin
     const itemMatch = line.match(/^(\s+)(\d+)\s+=>/)
 
     if (itemMatch) {
-      const itemLines = [line]
+      // Remove trailing opening bracket, curly braces, and hash references from first line
+      const cleanedLine = line.replace(/\s+[\[\{].*$/, '').replace(/\s+\{#\d+\}\s*$/, '')
+      const itemLines = [cleanedLine]
       const itemIndent = itemMatch[1].length
 
       // Collect all following lines until we find the next item at same indent level
@@ -188,7 +190,11 @@ function parseArrayItems(content: string[]): Array<{ index: string; lines: strin
           break
         }
 
-        itemLines.push(nextLine)
+        // Remove closing bracket/brace if it's the last line
+        const trimmedLine = nextLine.trim()
+        if (trimmedLine !== ']' && trimmedLine !== '}') {
+          itemLines.push(nextLine)
+        }
         i++
       }
 
@@ -225,64 +231,47 @@ function CollapsibleArray({
 
   return (
     <div className="space-y-2">
-      {/* Header line */}
-      {contentLines[0] && (
-        <div className="bg-black/30 px-3 py-2 rounded overflow-x-auto">
-          <SyntaxHighlighter text={contentLines[0]} />
-        </div>
-      )}
+      {/* Array items - clean display without header/closing brackets */}
+      {items.map((item) => {
+        const isExpanded = logExpandedItems.has(item.index)
+        const hasDetails = item.lines.length > 1
 
-      {/* Array items */}
-      <div className="ml-4 space-y-1">
-        {items.map((item) => {
-          const isExpanded = logExpandedItems.has(item.index)
-          const hasDetails = item.lines.length > 1
-
-          return (
-            <div
-              key={item.index}
-              className="glass bg-black/30 rounded-lg transition-all backdrop-blur-md overflow-hidden"
+        return (
+          <div
+            key={item.index}
+            className="glass bg-black/30 rounded-lg transition-all backdrop-blur-md overflow-hidden"
+          >
+            {/* Item header with toggle button */}
+            <button
+              onClick={() => onToggleItem(logId, item.index)}
+              className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-black/20 transition-colors group"
             >
-              {/* Item header with toggle button */}
-              <button
-                onClick={() => onToggleItem(logId, item.index)}
-                className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-black/20 transition-colors group"
-              >
-                {hasDetails && (
-                  <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
-                    {isExpanded ? '▼' : '▶'}
-                  </span>
-                )}
-                {!hasDetails && <span className="flex-shrink-0 w-4" />}
-                <span className="flex-1 overflow-x-auto text-gray-300">
-                  <SyntaxHighlighter text={item.lines[0]} />
+              {hasDetails && (
+                <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
+                  {isExpanded ? '▼' : '▶'}
                 </span>
-              </button>
-
-              {/* Expanded content */}
-              {isExpanded && hasDetails && (
-                <div className="px-4 py-3 space-y-0 bg-black/20">
-                  {item.lines.slice(1).map((line, idx) => (
-                    <div
-                      key={idx}
-                      className="text-[12px] overflow-x-auto text-dracula-foreground py-1"
-                    >
-                      <SyntaxHighlighter text={line} />
-                    </div>
-                  ))}
-                </div>
               )}
-            </div>
-          )
-        })}
-      </div>
+              <span className="flex-1 overflow-x-auto text-gray-300">
+                <SyntaxHighlighter text={item.lines[0]} />
+              </span>
+            </button>
 
-      {/* Closing bracket */}
-      {contentLines[contentLines.length - 1] && (
-        <div className="bg-black/30 px-3 py-2 rounded overflow-x-auto">
-          <SyntaxHighlighter text={contentLines[contentLines.length - 1]} />
-        </div>
-      )}
+            {/* Expanded content */}
+            {isExpanded && hasDetails && (
+              <div className="px-4 py-3 space-y-0 bg-black/20">
+                {item.lines.slice(1).map((line, idx) => (
+                  <div
+                    key={idx}
+                    className="text-[12px] overflow-x-auto text-dracula-foreground py-1"
+                  >
+                    <SyntaxHighlighter text={line} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -396,7 +385,7 @@ export default function App() {
             <p>Waiting for logs...</p>
           </div>
         ) : (
-          logs.map((log) => {
+          [...logs].reverse().map((log) => {
             const hasMore = shouldShowExpandButton(log.content)
             const isExpanded = hasMore ? expandedLogs.has(log.id) : true
 
@@ -415,7 +404,6 @@ export default function App() {
                       {isExpanded ? '▼' : '▶'}
                     </span>
                   )}
-                  {!hasMore && <span className="flex-shrink-0 w-4" />}
                   <div className="flex gap-3 items-center flex-1 text-xs text-gray-400">
                     <span className={`px-3 py-1 rounded-full font-semibold text-[11px] ${getLogTypeColor(log.type)} bg-white/5 group-hover:bg-white/10 transition-colors`}>
                       {log.type.toUpperCase()}
