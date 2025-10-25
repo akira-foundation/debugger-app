@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { LogEntry as LogEntryType, RayColor, ExpandedItems } from '../types'
 import { LogEntry } from './LogEntry'
 
@@ -24,8 +25,18 @@ export function LogList({
   getLogTypeColor,
   searchQuery,
 }: LogListProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+    }
+  }, [logs])
+
   return (
-    <div className="flex-1 overflow-y-auto p-5 bg-[#0f0f0f] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
+    <div
+      ref={scrollContainerRef}
+      className="flex-1 overflow-y-auto p-5 bg-[#0f0f0f] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
       {logs.length === 0 ? (
         <div className="flex items-center justify-center h-full text-gray-600 text-sm">
           <p>Waiting for logs...</p>
