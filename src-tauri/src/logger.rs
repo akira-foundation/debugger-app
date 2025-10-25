@@ -117,11 +117,34 @@ pub fn process_log(payload: &str, app: &AppHandle) {
 
                 let file_clean = file.split('/').last().unwrap_or("unknown").to_string();
 
-                let values = content
-                    .get("values")
-                    .and_then(|v| v.as_array())
-                    .cloned()
-                    .unwrap_or_else(|| vec![content.clone()]);
+                // For application_log, extract value and context
+                let values = if log_type == "application_log" {
+                    let mut log_parts = vec![];
+
+                    // Add the main value message
+                    if let Some(val) = content.get("value") {
+                        log_parts.push(val.clone());
+                    }
+
+                    // Add context if it exists
+                    if let Some(ctx) = content.get("context") {
+                        if ctx != &Value::Null {
+                            log_parts.push(ctx.clone());
+                        }
+                    }
+
+                    if log_parts.is_empty() {
+                        vec![content.clone()]
+                    } else {
+                        log_parts
+                    }
+                } else {
+                    content
+                        .get("values")
+                        .and_then(|v| v.as_array())
+                        .cloned()
+                        .unwrap_or_else(|| vec![content.clone()])
+                };
 
                 let mut content_lines = Vec::new();
                 for value in values {

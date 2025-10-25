@@ -1,4 +1,4 @@
-import { LogEntry as LogEntryType, ExpandedItems, rayColors } from '../types'
+import { LogEntry as LogEntryType, ExpandedItems } from '../types'
 import { isArrayContent } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { CollapsibleArray } from './CollapsibleArray'

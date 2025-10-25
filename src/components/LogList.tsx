@@ -41,7 +41,7 @@ export function LogList({
           })
           .map((log) => {
             const hasMore = shouldShowExpandButton(log.content)
-            const isExpanded = hasMore ? expandedLogs.has(log.id) : true
+            const isExpanded = expandedLogs.has(log.id) || !hasMore
 
             return (
               <LogEntry
