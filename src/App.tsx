@@ -239,30 +239,33 @@ function CollapsibleArray({
           const hasDetails = item.lines.length > 1
 
           return (
-            <div key={item.index}>
+            <div
+              key={item.index}
+              className="glass bg-black/30 rounded-lg transition-all backdrop-blur-md overflow-hidden"
+            >
               {/* Item header with toggle button */}
               <button
                 onClick={() => onToggleItem(logId, item.index)}
-                className="w-full text-left flex items-center gap-2 px-3 py-2 rounded bg-black/30 hover:bg-black/40 transition-colors group"
+                className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-black/20 transition-colors group"
               >
                 {hasDetails && (
-                  <span className="text-gray-400 group-hover:text-white flex-shrink-0">
+                  <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
                     {isExpanded ? '▼' : '▶'}
                   </span>
                 )}
                 {!hasDetails && <span className="flex-shrink-0 w-4" />}
-                <span className="flex-1 overflow-x-auto">
+                <span className="flex-1 overflow-x-auto text-gray-300">
                   <SyntaxHighlighter text={item.lines[0]} />
                 </span>
               </button>
 
               {/* Expanded content */}
               {isExpanded && hasDetails && (
-                <div className="ml-6 mt-1 space-y-1 border-l border-gray-700 pl-3 py-2">
+                <div className="px-4 py-3 space-y-0 bg-black/20">
                   {item.lines.slice(1).map((line, idx) => (
                     <div
                       key={idx}
-                      className="bg-black/20 px-3 py-1 rounded text-xs overflow-x-auto"
+                      className="text-[12px] overflow-x-auto text-dracula-foreground py-1"
                     >
                       <SyntaxHighlighter text={line} />
                     </div>
@@ -357,89 +360,92 @@ export default function App() {
 
   const getLogTypeColor = (type: string) => {
     switch (type) {
-      case 'info': return 'text-blue-500'
-      case 'warning': return 'text-yellow-500'
-      case 'error': return 'text-pink-600'
-      default: return 'text-white'
+      case 'info': return 'text-blue-400'
+      case 'warning': return 'text-dracula-orange'
+      case 'error': return 'text-dracula-red'
+      default: return 'text-dracula-foreground'
     }
   }
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
-      <header className="flex justify-between items-center px-5 py-4 bg-gradient-to-br from-[#1a1a2e] to-[#16213e] border-b border-[#2a2a4e] flex-shrink-0">
-        <div>
-          <h1 className="text-xl font-semibold mb-1">Akira Debugger</h1>
-          <p className="text-xs text-gray-500">Real-time Laravel Ray logs</p>
-        </div>
+      <header className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-[#1a1a2a]/80 via-[#1a0f2e]/80 to-[#0f0f0f]/80 backdrop-blur-xl flex-shrink-0">
+        <h1 className="text-2xl font-bold text-white">
+          Akira Debugger
+        </h1>
         <div className="flex gap-3 items-center">
-          <span className={`text-xs px-3 py-1.5 rounded border ${
-            isListening 
-              ? 'text-[#56db3a] border-[#56db3a] bg-[#56db3a]/10' 
-              : 'text-[#ff8400] border-[#ff8400] bg-[#ff8400]/10'
+          <span className={`text-xs px-4 py-2 rounded-full font-semibold transition-all ${
+            isListening
+              ? 'bg-green-500/20 text-green-400'
+              : 'bg-orange-500/20 text-orange-400'
           }`}>
-            {isListening ? 'Listening' : 'Waiting'}
+            {isListening ? '● Listening' : '○ Waiting'}
           </span>
-          <button 
-            onClick={clearLogs} 
-            className="px-4 py-1.5 text-xs bg-white/10 border border-white/20 text-white rounded cursor-pointer transition-all hover:bg-white/15 hover:border-white/30"
+          <button
+            onClick={clearLogs}
+            className="px-4 py-2 text-xs font-medium rounded-full bg-white/10 hover:bg-white/20 transition-all"
           >
             Clear
           </button>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 bg-[#0f0f0f] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-[#333] [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-[#555]">
+      <div className="flex-1 overflow-y-auto p-5 bg-[#0f0f0f] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
         {logs.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-600 text-sm">
             <p>Waiting for logs...</p>
           </div>
         ) : (
           logs.map((log) => {
-            const isExpanded = expandedLogs.has(log.id)
             const hasMore = shouldShowExpandButton(log.content)
-            const preview = getPreview(log.content)
-            const displayContent = isExpanded ? log.content : [preview]
+            const isExpanded = hasMore ? expandedLogs.has(log.id) : true
 
             return (
-              <div key={log.id} className={`mb-4 p-3 px-4 bg-[#1a1a1a] border-l-4 ${getLogBorderColor(log.type)} rounded font-mono text-[13px] leading-relaxed overflow-hidden`}>
-                <div className="flex gap-3 items-center mb-2 text-xs text-gray-500">
-                  <span className={`px-2 py-0.5 bg-white/5 rounded font-medium ${getLogTypeColor(log.type)}`}>
-                    {log.type}
-                  </span>
-                  <span className="text-gray-600 text-[11px]">{log.location}</span>
-                  <span className="ml-auto text-gray-700">{log.timestamp}</span>
-                </div>
-                <div className="mt-2">
-                  {isArrayContent(displayContent as string[]) && isExpanded ? (
-                    <CollapsibleArray
-                      logId={log.id}
-                      content={displayContent as string[]}
-                      expandedItems={expandedItems}
-                      onToggleItem={toggleItemExpanded}
-                    />
-                  ) : (
-                    displayContent.map((line, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-black/30 px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words my-1 first:mt-0"
-                      >
-                        <SyntaxHighlighter text={line} />
+              <div
+                key={log.id}
+                className="glass card mb-4 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-lg hover:shadow-purple-500/30 backdrop-blur-lg"
+              >
+                {/* Clickable header to toggle expand */}
+                <button
+                  onClick={() => toggleExpanded(log.id)}
+                  className="w-full text-left p-4 hover:bg-black/20 transition-colors flex gap-3 items-center group"
+                >
+                  {hasMore && (
+                    <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
+                      {isExpanded ? '▼' : '▶'}
+                    </span>
+                  )}
+                  {!hasMore && <span className="flex-shrink-0 w-4" />}
+                  <div className="flex gap-3 items-center flex-1 text-xs text-gray-400">
+                    <span className={`px-3 py-1 rounded-full font-semibold text-[11px] ${getLogTypeColor(log.type)} bg-white/5 group-hover:bg-white/10 transition-colors`}>
+                      {log.type.toUpperCase()}
+                    </span>
+                    <span className="text-gray-600 text-[11px]">{log.location}</span>
+                    <span className="ml-auto text-gray-600 text-[11px] font-mono">{log.timestamp}</span>
+                  </div>
+                </button>
+                {isExpanded && (
+                  <div className="px-4 pb-4">
+                    {isArrayContent(log.content as string[]) ? (
+                      <CollapsibleArray
+                        logId={log.id}
+                        content={log.content}
+                        expandedItems={expandedItems}
+                        onToggleItem={toggleItemExpanded}
+                      />
+                    ) : (
+                      <div className="space-y-2">
+                        {log.content.map((line, idx) => (
+                          <div
+                            key={idx}
+                            className="bg-black/30 px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words"
+                          >
+                            <SyntaxHighlighter text={line} />
+                          </div>
+                        ))}
                       </div>
-                    ))
-                  )}
-                  {!isExpanded && hasMore && (
-                    <div className="text-gray-600 text-[11px] px-3 py-2 mt-1 italic">
-                      ... ({log.content.length} total lines)
-                    </div>
-                  )}
-                </div>
-                {hasMore && (
-                  <button
-                    onClick={() => toggleExpanded(log.id)}
-                    className="mt-2 px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/20 rounded text-gray-400 hover:text-white transition-all cursor-pointer"
-                  >
-                    {isExpanded ? '▼ Collapse' : `▶ Expand (${log.content.length} lines)`}
-                  </button>
+                    )}
+                  </div>
                 )}
               </div>
             )

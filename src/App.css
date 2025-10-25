@@ -1,22 +1,60 @@
 @import "tailwindcss";
 
-/* Syntax Highlighting */
+/* Akira Hunter Brand Colors - Purple Theme + Dracula */
+:root {
+  /* Purple Colors */
+  --primary-purple: #8b5cf6;
+  --accent-purple: #a78bfa;
+  --dark-purple: #6d28d9;
+  --vibrant-purple: #7c3aed;
+  --deep-purple: #5b21b6;
+
+  /* Dracula Theme */
+  --dracula-background: #282a36;
+  --dracula-current-line: #44475a;
+  --dracula-selection: #44475a;
+  --dracula-foreground: #f8f8f2;
+  --dracula-comment: #6272a4;
+  --dracula-red: #ff5555;
+  --dracula-orange: #ffb86c;
+  --dracula-yellow: #f1fa8c;
+  --dracula-green: #50fa7b;
+  --dracula-cyan: #8be9fd;
+  --dracula-purple: #bd93f9;
+  --dracula-pink: #ff79c6;
+
+  /* Akira Brand */
+  --akira-black: #0a0a0a;
+  --dark-bg: #0f0f0f;
+  --dark-secondary: #1a1a1a;
+  --dark-tertiary: #2a2a2a;
+  --success-green: #56db3a;
+  --warning-orange: #ff8400;
+}
+
+/* Base styles */
+body {
+  background-color: var(--dark-bg);
+  color: #e0e0e0;
+}
+
+/* Syntax Highlighting - Dracula Theme */
 .syntax-highlight {
   font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 13px;
   line-height: 1.6;
-  color: #a1c16b;
+  color: var(--dracula-foreground);
   margin: 0;
   padding: 0;
   background-color: transparent;
 }
 
 .syntax-highlight.json {
-  color: #a1c16b;
+  color: var(--dracula-foreground);
 }
 
 .syntax-highlight.php-dump {
-  color: #a1c16b;
+  color: var(--dracula-foreground);
   line-height: 1.6;
 }
 
@@ -26,24 +64,49 @@
 }
 
 .syntax-number {
-  color: #ff9470;
+  color: var(--dracula-cyan);
   font-weight: 500;
 }
 
 .syntax-boolean {
-  color: #ff9470;
+  color: var(--dracula-purple);
   font-weight: 500;
 }
 
 .syntax-null {
-  color: #bd8fd9;
+  color: var(--dracula-pink);
   font-weight: 500;
 }
 
 .syntax-string {
-  color: #a1c16b;
+  color: var(--dracula-yellow);
 }
 
 .syntax-key {
-  color: #7dd3fc;
+  color: var(--dracula-cyan);
+}
+
+/* Liquid Glass Effect */
+.glass {
+  background: rgba(26, 26, 26, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+}
+
+.glass:hover {
+  background: rgba(26, 26, 26, 0.4);
+}
+
+/* Card styles - Glassmorphism */
+.card {
+  background: rgba(26, 26, 26, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background: rgba(26, 26, 26, 0.4);
 }
