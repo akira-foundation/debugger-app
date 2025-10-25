@@ -14,7 +14,7 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
     <header className="flex justify-between items-center px-8 py-5 bg-[#0f0f0f] border-b border-white/5 flex-shrink-0">
       <div className="flex items-center gap-3">
         <h1 className="text-xl font-semibold text-white tracking-tight">
-          Akira Debugger
+          {isListening ? 'Listening...' : 'Offline'}
         </h1>
         <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
           isListening
