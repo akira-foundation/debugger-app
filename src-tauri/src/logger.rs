@@ -184,7 +184,7 @@ pub fn process_log(payload: &str, app: &AppHandle) {
                     .unwrap_or("default")
                     .to_lowercase();
 
-                let mut log_entry = json!({
+                let  log_entry = json!({
                     "id": Uuid::new_v4().to_string(),
                     "timestamp": now,
                     "type": log_type.to_lowercase(),

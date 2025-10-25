@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { listen } from '@tauri-apps/api/event'
+import { invoke } from '@tauri-apps/api/core'
 import './App.css'
 
 import { Header } from './components/Header'
@@ -13,6 +14,7 @@ export default function App() {
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set())
   const [expandedItems, setExpandedItems] = useState<ExpandedItems>({})
   const [selectedColor, setSelectedColor] = useState<RayColor | null>(null)
+  const [isPinned, setIsPinned] = useState(false)
 
   useEffect(() => {
     const unlistenLog = listen('log-entry', (event: any) => {
@@ -63,6 +65,31 @@ export default function App() {
 
   const clearLogs = () => setLogs([])
 
+  // Handle window pin/unpin
+  useEffect(() => {
+    const togglePin = async () => {
+      try {
+        await invoke('set_always_on_top', { alwaysOnTop: isPinned })
+      } catch (e) {
+        console.warn('Could not toggle pin:', e)
+      }
+    }
+    togglePin()
+  }, [isPinned])
+
+  // Handle keyboard shortcut for clearing logs (Cmd+L or Ctrl+L)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
+        e.preventDefault()
+        clearLogs()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [])
+
   const toggleExpanded = (logId: string) => {
     const newExpanded = new Set(expandedLogs)
     if (newExpanded.has(logId)) {
@@ -104,7 +131,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
-      <Header isListening={isListening} onClear={clearLogs} />
+      <Header isListening={isListening} onClear={clearLogs} isPinned={isPinned} onTogglePin={() => setIsPinned(!isPinned)} />
       <ColorFilter selectedColor={selectedColor} onSelectColor={setSelectedColor} />
       <LogList
         logs={logs}
