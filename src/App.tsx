@@ -5,6 +5,7 @@ import './App.css'
 
 import { Header } from './components/Header'
 import { ColorFilter } from './components/ColorFilter'
+import { SearchBar } from './components/SearchBar'
 import { LogList } from './components/LogList'
 import type { LogEntry, RayColor, ExpandedItems } from './types'
 
@@ -15,6 +16,8 @@ export default function App() {
   const [expandedItems, setExpandedItems] = useState<ExpandedItems>({})
   const [selectedColor, setSelectedColor] = useState<RayColor | null>(null)
   const [isPinned, setIsPinned] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   useEffect(() => {
     const unlistenLog = listen('log-entry', (event: any) => {
@@ -77,12 +80,22 @@ export default function App() {
     togglePin()
   }, [isPinned])
 
-  // Handle keyboard shortcut for clearing logs (Cmd+L or Ctrl+L)
+  // Handle keyboard shortcut for clearing logs (Cmd+L or Ctrl+L) and search (Cmd+F or Ctrl+F)
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
         e.preventDefault()
         clearLogs()
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+        e.preventDefault()
+        setIsSearchOpen((prev) => !prev)
+        setTimeout(() => {
+          const searchInput = document.querySelector('input[placeholder*="Search logs"]') as HTMLInputElement
+          if (searchInput) {
+            searchInput.focus()
+          }
+        }, 0)
       }
     }
 
@@ -131,7 +144,8 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
-      <Header isListening={isListening} onClear={clearLogs} isPinned={isPinned} onTogglePin={() => setIsPinned(!isPinned)} />
+      <Header isListening={isListening} onClear={clearLogs} isPinned={isPinned} onTogglePin={() => setIsPinned(!isPinned)} isSearchOpen={isSearchOpen} onToggleSearch={() => setIsSearchOpen(!isSearchOpen)} />
+      <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
       <ColorFilter selectedColor={selectedColor} onSelectColor={setSelectedColor} />
       <LogList
         logs={logs}
@@ -142,6 +156,7 @@ export default function App() {
         onToggleItem={toggleItemExpanded}
         shouldShowExpandButton={shouldShowExpandButton}
         getLogTypeColor={getLogTypeColor}
+        searchQuery={searchQuery}
       />
     </div>
   )

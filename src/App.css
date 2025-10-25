@@ -110,3 +110,8 @@ body {
 .card:hover {
   background: rgba(26, 26, 26, 0.4);
 }
+
+/* Tooltip speed - aparece em 0.2s */
+* {
+  --tooltip-delay: 0.2s;
+}
