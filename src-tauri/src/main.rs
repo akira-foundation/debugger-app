@@ -4,7 +4,8 @@
 mod listener;
 mod logger;
 
-use tauri::menu::{Menu, MenuBuilder, SubmenuBuilder};
+use tauri::menu::{MenuBuilder, SubmenuBuilder, MenuItemBuilder};
+use tauri::{Manager, Emitter};
 
 
 #[tauri::command]
@@ -13,12 +14,30 @@ async fn set_always_on_top(window: tauri::Window, always_on_top: bool) -> Result
         .map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn show_about() -> Result<String, String> {
+    Ok(r#"
+Akira Debugger
+Version 0.1.0
+
+A lightweight debugging tool for PHP applications.
+Monitor and analyze application logs in real-time.
+"#.to_string())
+}
+
 #[tokio::main]
 async fn main() {
     tauri::Builder::default()
         .menu(|app_handle| {
+            // Create about menu item
+            let about_item = MenuItemBuilder::new("About Akira Debugger")
+                .id("about")
+                .enabled(true)
+                .build(app_handle)?;
+
             // Create a menu with just the app name
             let app_menu = SubmenuBuilder::new(app_handle, "Akira Debugger")
+                .item(&about_item)
                 .build()?;
 
             let menu = MenuBuilder::new(app_handle)
@@ -26,7 +45,17 @@ async fn main() {
                 .build()?;
             Ok(menu)
         })
-        .invoke_handler(tauri::generate_handler![set_always_on_top])
+        .on_menu_event(|app, menu_event| {
+            match menu_event.id.as_ref() {
+                "about" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let _ = window.emit("show_about", ());
+                    }
+                }
+                _ => {}
+            }
+        })
+        .invoke_handler(tauri::generate_handler![set_always_on_top, show_about])
         .setup(|app| {
             let app_handle = app.handle().clone();
 

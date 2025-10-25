@@ -18,6 +18,7 @@ export default function App() {
   const [isPinned, setIsPinned] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
 
   useEffect(() => {
     const unlistenLog = listen('log-entry', (event: any) => {
@@ -53,15 +54,20 @@ export default function App() {
       })
     })
 
-    Promise.all([unlistenLog, unlistenLabel, unlistenColor]).then(() => {
+    const unlistenAbout = listen('show_about', () => {
+      setShowAbout(true)
+    })
+
+    Promise.all([unlistenLog, unlistenLabel, unlistenColor, unlistenAbout]).then(() => {
       setIsListening(true)
     })
 
     return () => {
-      Promise.all([unlistenLog, unlistenLabel, unlistenColor]).then(([fn1, fn2, fn3]) => {
+      Promise.all([unlistenLog, unlistenLabel, unlistenColor, unlistenAbout]).then(([fn1, fn2, fn3, fn4]) => {
         fn1()
         fn2()
         fn3()
+        fn4()
       })
     }
   }, [])
@@ -144,6 +150,24 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
+      {showAbout && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[#1a1a1a] rounded-lg p-8 max-w-md w-96 border border-white/10">
+            <h2 className="text-2xl font-bold mb-4">Akira Debugger</h2>
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              Version 0.1.0<br /><br />
+              A lightweight debugging tool for PHP applications.<br /><br />
+              Monitor and analyze application logs in real-time.
+            </p>
+            <button
+              onClick={() => setShowAbout(false)}
+              className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <Header isListening={isListening} onClear={clearLogs} isPinned={isPinned} onTogglePin={() => setIsPinned(!isPinned)} isSearchOpen={isSearchOpen} onToggleSearch={() => setIsSearchOpen(!isSearchOpen)} />
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
       <ColorFilter selectedColor={selectedColor} onSelectColor={setSelectedColor} />
