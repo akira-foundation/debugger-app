@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core'
 import { LogEntry as LogEntryType, ExpandedItems } from '../types'
 import { isArrayContent } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
@@ -39,6 +40,18 @@ export function LogEntry({
   shouldShowExpandButton,
   getLogTypeColor,
 }: LogEntryProps) {
+  const handleOpenInEditor = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      // Parse location format: "filename.php:123"
+      const [filename, line] = log.location.split(':')
+      const lineNum = parseInt(line, 10) || 0
+      await invoke('open_in_editor', { filePath: filename, line: lineNum })
+    } catch (err) {
+      console.error('Failed to open file in editor:', err)
+    }
+  }
+
   return (
     <div
       key={log.id}
@@ -66,7 +79,13 @@ export function LogEntry({
               </span>
             )
           })()}
-          <span className="text-gray-600 text-[11px]">{log.location}</span>
+          <span
+            onClick={handleOpenInEditor}
+            className="text-gray-600 text-[11px] cursor-pointer hover:text-purple-400 hover:underline transition-colors"
+            title="Click to open in PhpStorm"
+          >
+            {log.location}
+          </span>
           <span className="ml-auto text-gray-600 text-[11px] font-mono">{log.timestamp}</span>
         </div>
       </button>
