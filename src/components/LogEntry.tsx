@@ -43,10 +43,11 @@ export function LogEntry({
   const handleOpenInEditor = async (e: React.MouseEvent) => {
     e.stopPropagation()
     try {
-      // Parse location format: "filename.php:123"
-      const [filename, line] = log.location.split(':')
+      // Use file_path if available, otherwise parse from location
+      const filePath = log.file_path || log.location.split(':')[0]
+      const line = log.location.split(':')[1]
       const lineNum = parseInt(line, 10) || 0
-      await invoke('open_in_editor', { filePath: filename, line: lineNum })
+      await invoke('open_in_editor', { filePath, line: lineNum })
     } catch (err) {
       console.error('Failed to open file in editor:', err)
     }

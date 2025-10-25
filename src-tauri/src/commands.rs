@@ -20,29 +20,14 @@ Monitor and analyze application logs in real-time.
 
 #[tauri::command]
 pub async fn open_in_editor(file_path: String, line: u64) -> Result<(), String> {
-    #[cfg(target_os = "macos")]
-    {
-        Command::new("open")
-            .args(&["-a", "PhpStorm", "--args", &format!("{}:{}", file_path, line)])
-            .spawn()
-            .map_err(|e| e.to_string())?;
-    }
+    let line_str = line.to_string();
 
-    #[cfg(target_os = "windows")]
-    {
-        Command::new("cmd")
-            .args(&["/C", "start", "phpstorm", &format!("{}:{}", file_path, line)])
-            .spawn()
-            .map_err(|e| e.to_string())?;
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        Command::new("phpstorm")
-            .args(&[&format!("{}:{}", file_path, line)])
-            .spawn()
-            .map_err(|e| e.to_string())?;
-    }
+    // Simply open the file directly at the specified line
+    // PhpStorm will recognize the Laravel project automatically
+    Command::new("phpstorm")
+        .args(&["--line", &line_str, &file_path])
+        .spawn()
+        .map_err(|e| e.to_string())?;
 
     Ok(())
 }

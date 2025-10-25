@@ -5,6 +5,7 @@ export interface LogEntry {
   timestamp: string
   type: string
   location: string
+  file_path?: string
   content: string[]
   color?: RayColor
   pending_label?: string

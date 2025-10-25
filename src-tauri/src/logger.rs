@@ -139,7 +139,8 @@ fn emit_log_entry(
         .and_then(|l| l.as_u64())
         .unwrap_or(0);
 
-    let file_clean = file.split('/').last().unwrap_or("unknown").to_string();
+    // Use full file path for editor integration, but display only filename
+    let file_display = file.split('/').last().unwrap_or("unknown").to_string();
 
     let values = extract_values(log_type, content);
     let content_lines = format_content_lines(&values);
@@ -149,7 +150,8 @@ fn emit_log_entry(
         "id": Uuid::new_v4().to_string(),
         "timestamp": timestamp,
         "type": log_type.to_lowercase(),
-        "location": format!("{}:{}", file_clean, line),
+        "location": format!("{}:{}", file_display, line),
+        "file_path": file,
         "content": content_lines,
         "color": color,
     });
