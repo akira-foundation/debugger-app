@@ -4,7 +4,6 @@ import { invoke } from '@tauri-apps/api/core'
 import './App.css'
 
 import { Header } from './components/Header'
-import { ColorFilter } from './components/ColorFilter'
 import { SearchBar } from './components/SearchBar'
 import { LogList } from './components/LogList'
 import type { LogEntry, RayColor, ExpandedItems } from './types'
@@ -168,9 +167,17 @@ export default function App() {
           </div>
         </div>
       )}
-      <Header isListening={isListening} onClear={clearLogs} isPinned={isPinned} onTogglePin={() => setIsPinned(!isPinned)} isSearchOpen={isSearchOpen} onToggleSearch={() => setIsSearchOpen(!isSearchOpen)} />
+      <Header
+        isListening={isListening}
+        onClear={clearLogs}
+        isPinned={isPinned}
+        onTogglePin={() => setIsPinned(!isPinned)}
+        isSearchOpen={isSearchOpen}
+        onToggleSearch={() => setIsSearchOpen(!isSearchOpen)}
+        selectedColor={selectedColor}
+        onSelectColor={setSelectedColor}
+      />
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
-      <ColorFilter selectedColor={selectedColor} onSelectColor={setSelectedColor} />
       <LogList
         logs={logs}
         selectedColor={selectedColor}
