@@ -408,29 +408,28 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
-      <header className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-[#1a1a2a]/80 via-[#1a0f2e]/80 to-[#0f0f0f]/80 backdrop-blur-xl flex-shrink-0">
-        <h1 className="text-2xl font-bold text-white">
-          Akira Debugger
-        </h1>
-        <div className="flex gap-3 items-center">
-          <span className={`text-xs px-4 py-2 rounded-full font-semibold transition-all ${
+      <header className="flex justify-between items-center px-8 py-5 bg-[#0f0f0f] border-b border-white/5 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-semibold text-white tracking-tight">
+            Akira Debugger
+          </h1>
+          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
             isListening
-              ? 'bg-green-500/20 text-green-400'
-              : 'bg-orange-500/20 text-orange-400'
+              ? 'bg-green-400 animate-[ping_2s_cubic-bezier(0.4,0,0.6,1)_infinite]'
+              : 'bg-gray-600'
           }`}>
-            {isListening ? '● Listening' : '○ Waiting'}
           </span>
-          <button
-            onClick={clearLogs}
-            className="px-4 py-2 text-xs font-medium rounded-full bg-white/10 hover:bg-white/20 transition-all"
-          >
-            Clear
-          </button>
         </div>
+        <button
+          onClick={clearLogs}
+          className="px-4 py-2 text-xs font-medium rounded-lg bg-white/10 hover:bg-white/15 transition-all"
+        >
+          Clear
+        </button>
       </header>
 
       {/* Color filter tabs */}
-      <div className="flex gap-2 px-6 py-3 bg-[#0f0f0f]/50 border-b border-white/5 overflow-x-auto">
+      <div className="flex gap-3 px-6 py-3 bg-[#0f0f0f]/50 border-b border-white/5 overflow-x-auto items-center">
         <button
           onClick={() => setSelectedColor(null)}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex-shrink-0 ${
@@ -441,16 +440,20 @@ export default function App() {
         >
           All
         </button>
-        {Object.entries(rayColors).map(([color, styles]) => (
-          <button
-            key={color}
-            onClick={() => setSelectedColor(color as RayColor)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex-shrink-0 ${styles.bg} ${
-              selectedColor === color ? 'opacity-100 ring-2 ring-white' : 'opacity-60 hover:opacity-80'
-            }`}
-            title={color}
-          />
-        ))}
+        <div className="flex gap-2 items-center">
+          {Object.entries(rayColors)
+            .filter(([color]) => color !== 'default')
+            .map(([color, styles]) => (
+              <button
+                key={color}
+                onClick={() => setSelectedColor(color as RayColor)}
+                className={`w-4 h-4 rounded-full transition-all flex-shrink-0 ${styles.bg} ${
+                  selectedColor === color ? 'ring-1 ring-white' : 'opacity-60 hover:opacity-100'
+                }`}
+                title={color}
+              />
+            ))}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 bg-[#0f0f0f] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
