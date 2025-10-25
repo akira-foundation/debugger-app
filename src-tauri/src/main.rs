@@ -1,66 +1,26 @@
 // Prevents additional console window on Windows in release
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod listener;
+mod commands;
 mod logger;
+mod menu;
+mod server;
 
-use tauri::menu::{MenuBuilder, SubmenuBuilder, MenuItemBuilder};
-use tauri::{Manager, Emitter};
-
-
-#[tauri::command]
-async fn set_always_on_top(window: tauri::Window, always_on_top: bool) -> Result<(), String> {
-    window.set_always_on_top(always_on_top)
-        .map_err(|e| e.to_string())
-}
-
-#[tauri::command]
-async fn show_about() -> Result<String, String> {
-    Ok(r#"
-Akira Debugger
-Version 0.1.0
-
-A lightweight debugging tool for PHP applications.
-Monitor and analyze application logs in real-time.
-"#.to_string())
-}
+use commands::{set_always_on_top, show_about};
 
 #[tokio::main]
 async fn main() {
     tauri::Builder::default()
-        .menu(|app_handle| {
-            // Create about menu item
-            let about_item = MenuItemBuilder::new("About Akira Debugger")
-                .id("about")
-                .enabled(true)
-                .build(app_handle)?;
-
-            // Create a menu with just the app name
-            let app_menu = SubmenuBuilder::new(app_handle, "Akira Debugger")
-                .item(&about_item)
-                .build()?;
-
-            let menu = MenuBuilder::new(app_handle)
-                .item(&app_menu)
-                .build()?;
-            Ok(menu)
-        })
+        .menu(menu::build_menu)
         .on_menu_event(|app, menu_event| {
-            match menu_event.id.as_ref() {
-                "about" => {
-                    if let Some(window) = app.get_webview_window("main") {
-                        let _ = window.emit("show_about", ());
-                    }
-                }
-                _ => {}
-            }
+            menu::handle_menu_event(app, menu_event.id());
         })
         .invoke_handler(tauri::generate_handler![set_always_on_top, show_about])
         .setup(|app| {
             let app_handle = app.handle().clone();
 
             tokio::spawn(async move {
-                listener::start_listener("127.0.0.1", 23517, app_handle).await;
+                server::start_server(app_handle).await;
             });
 
             Ok(())
