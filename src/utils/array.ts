@@ -9,6 +9,13 @@ export function isArrayContent(content: string[]): boolean {
   )
 }
 
+export function isEloquentModel(content: string[]): boolean {
+  if (content.length < 1) return false
+  // Check if it's an Eloquent model instance
+  const firstLine = content[0]
+  return firstLine.includes('{#') && /^.*\\.*$/.test(firstLine) && !firstLine.includes('array:')
+}
+
 export function parseArrayItems(content: string[]): Array<{ index: string; lines: string[] }> {
   const items: Array<{ index: string; lines: string[] }> = []
 

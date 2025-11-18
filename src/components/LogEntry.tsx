@@ -1,8 +1,9 @@
 import { invoke } from '@tauri-apps/api/core'
 import { LogEntry as LogEntryType, ExpandedItems } from '../types'
-import { isArrayContent } from '../utils/array'
+import { isArrayContent, isEloquentModel } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { CollapsibleArray } from './CollapsibleArray'
+import { EloquentModelDisplay } from './EloquentModelDisplay'
 
 interface LogEntryProps {
   log: LogEntryType
@@ -12,6 +13,17 @@ interface LogEntryProps {
   onToggleItem: (logId: string, itemIndex: string) => void
   shouldShowExpandButton: boolean
   getLogTypeColor: (type: string) => string
+}
+
+function getLevelStyles(type: string): { border: string; dot: string; text: string } {
+  const styleMap: Record<string, { border: string; dot: string; text: string }> = {
+    info: { border: 'border-emerald-500/30', dot: 'bg-emerald-500', text: 'text-emerald-400' },
+    debug: { border: 'border-cyan-500/30', dot: 'bg-cyan-500', text: 'text-cyan-400' },
+    error: { border: 'border-red-500/30', dot: 'bg-red-500', text: 'text-red-400' },
+    warning: { border: 'border-purple-500/30', dot: 'bg-purple-500', text: 'text-purple-400' },
+  }
+
+  return styleMap[type.toLowerCase()] || styleMap['info']
 }
 
 function getLabelColorStyles(logColor: string | undefined) {
@@ -40,6 +52,8 @@ export function LogEntry({
   shouldShowExpandButton,
   getLogTypeColor,
 }: LogEntryProps) {
+  const levelStyles = getLevelStyles(log.type)
+
   const handleOpenInEditor = async (e: React.MouseEvent) => {
     e.stopPropagation()
     try {
@@ -56,43 +70,51 @@ export function LogEntry({
   return (
     <div
       key={log.id}
-      className="glass card mb-4 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-lg hover:shadow-purple-500/30 backdrop-blur-lg"
+      className={`glass card mb-2 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-md hover:shadow-purple-500/20 backdrop-blur-lg border ${levelStyles.border}`}
     >
       {/* Clickable header to toggle expand */}
       <button
         onClick={onToggleExpand}
-        className="w-full text-left p-4 hover:bg-black/20 transition-colors flex gap-3 items-center group flex-wrap"
+        className="w-full text-left px-3 py-3 hover:bg-black/10 transition-colors flex gap-3 items-center group"
       >
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className={`w-2 h-2 rounded-full ${levelStyles.dot}`} />
+          <span className={`font-mono text-[11px] font-bold ${levelStyles.text}`}>
+            {log.type.toUpperCase()}
+          </span>
+        </div>
+        <span className="text-gray-500 text-[11px] flex-1">{log.timestamp}</span>
+        <span
+          onClick={handleOpenInEditor}
+          className="text-gray-600 text-[11px] cursor-pointer hover:text-purple-400 hover:underline transition-colors whitespace-nowrap flex-shrink-0"
+          title="Click to open in PhpStorm"
+        >
+          {log.location}
+        </span>
         {shouldShowExpandButton && (
-          <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
+          <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0 text-sm">
             {isExpanded ? '▼' : '▶'}
           </span>
         )}
-        <div className="flex gap-3 items-center flex-1 text-xs text-gray-400 flex-wrap w-full">
-          <span className={`px-3 py-1 rounded-full font-semibold text-[11px] ${getLogTypeColor(log.type)} bg-white/5 group-hover:bg-white/10 transition-colors`}>
-            {log.type.toUpperCase()}
-          </span>
-          {log.pending_label && (() => {
-            const labelColors = getLabelColorStyles(log.color)
-            return (
-              <span className={`px-2 py-0.5 rounded-full font-medium text-[10px] border ${labelColors.border} ${labelColors.text} ${labelColors.bg}`}>
-                {log.pending_label}
-              </span>
-            )
-          })()}
-          <span
-            onClick={handleOpenInEditor}
-            className="text-gray-600 text-[11px] cursor-pointer hover:text-purple-400 hover:underline transition-colors"
-            title="Click to open in PhpStorm"
-          >
-            {log.location}
-          </span>
-          <span className="ml-auto text-gray-600 text-[11px] font-mono">{log.timestamp}</span>
-        </div>
+        {log.pending_label && (() => {
+          const labelColors = getLabelColorStyles(log.color)
+          return (
+            <span className={`px-2 py-0.5 rounded-full font-medium text-[10px] border whitespace-nowrap flex-shrink-0 ${labelColors.border} ${labelColors.text} ${labelColors.bg}`}>
+              {log.pending_label}
+            </span>
+          )
+        })()}
       </button>
       {isExpanded && (
-        <div className="px-4 pb-4">
-          {isArrayContent(log.content as string[]) ? (
+        <div className="px-3 pb-4 border-t border-white/5 pt-3">
+          {log.type.toLowerCase() === 'eloquent_model' ? (
+            <EloquentModelDisplay
+              content={log.content}
+              logId={log.id}
+              expandedItems={expandedItems}
+              onToggleItem={onToggleItem}
+            />
+          ) : isArrayContent(log.content as string[]) ? (
             <CollapsibleArray
               logId={log.id}
               content={log.content}
