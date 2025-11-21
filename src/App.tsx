@@ -6,6 +6,9 @@ import './App.css'
 import { Header } from './components/Header'
 import { SearchBar } from './components/SearchBar'
 import { LogList } from './components/LogList'
+import { LicenseSplash } from './components/LicenseSplash'
+import { LicenseSettings } from './components/LicenseSettings'
+import { useLicenseValidation } from './hooks/useLicenseValidation'
 import type { LogEntry, RayColor, ExpandedItems } from './types'
 
 export default function App() {
@@ -18,6 +21,32 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
+  const [showLicenseSettings, setShowLicenseSettings] = useState(false)
+
+  // License validation
+  const licenseValidation = useLicenseValidation()
+  const [licenseValidationComplete, setLicenseValidationComplete] = useState(false)
+  const [isValidatingLicense, setIsValidatingLicense] = useState(false)
+
+  // Initialize license validation on app mount
+  useEffect(() => {
+    licenseValidation.validate()
+  }, [])
+
+  // Show splash screen during validation, or if validation fails allow to continue
+  const handleValidationComplete = (validation: any) => {
+    setLicenseValidationComplete(true)
+  }
+
+  // Handle license validation refresh
+  const handleLicenseRefresh = async () => {
+    setIsValidatingLicense(true)
+    try {
+      await licenseValidation.validate()
+    } finally {
+      setIsValidatingLicense(false)
+    }
+  }
 
   useEffect(() => {
     const unlistenLog = listen('log-entry', (event: any) => {
@@ -147,8 +176,33 @@ export default function App() {
     }
   }
 
+  // Show license settings page if user requested it
+  if (showLicenseSettings) {
+    return (
+      <LicenseSettings
+        onBack={() => setShowLicenseSettings(false)}
+        validation={licenseValidation.validation}
+        onValidationRefresh={handleLicenseRefresh}
+        isValidating={isValidatingLicense}
+      />
+    )
+  }
+
+  // Show license splash during validation
+  if (!licenseValidationComplete) {
+    return <LicenseSplash onValidationComplete={handleValidationComplete} onOpenSettings={() => setShowLicenseSettings(true)} />
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        validation={licenseValidation.validation}
+        onValidationRefresh={licenseValidation.validate}
+      />
+
       {showAbout && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#1a1a1a] rounded-lg p-8 max-w-md w-96 border border-white/10">
@@ -176,6 +230,7 @@ export default function App() {
         onToggleSearch={() => setIsSearchOpen(!isSearchOpen)}
         selectedColor={selectedColor}
         onSelectColor={setSelectedColor}
+        onToggleSettings={() => setShowLicenseSettings(true)}
       />
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
       <LogList

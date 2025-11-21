@@ -1,4 +1,4 @@
-import { Search, Pin, Trash2 } from 'lucide-react'
+import { Search, Pin, Trash2, Settings } from 'lucide-react'
 import { rayColors } from '../types'
 import type { RayColor } from '../types'
 
@@ -11,9 +11,10 @@ interface HeaderProps {
   onToggleSearch: () => void
   selectedColor: RayColor | null
   onSelectColor: (color: RayColor | null) => void
+  onToggleSettings: () => void
 }
 
-export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOpen, onToggleSearch, selectedColor, onSelectColor }: HeaderProps) {
+export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOpen, onToggleSearch, selectedColor, onSelectColor, onToggleSettings }: HeaderProps) {
   return (
     <header className="flex justify-between items-center px-6 py-2 bg-[#0f0f0f] border-b border-white/5 flex-shrink-0">
       <div className="flex items-center gap-2">
@@ -78,6 +79,13 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
           }`}
         >
           <Pin size={13} fill={isPinned ? 'currentColor' : 'none'} />
+        </button>
+        <button
+          onClick={onToggleSettings}
+          title="Settings"
+          className="p-1 rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-200 transition-all cursor-pointer"
+        >
+          <Settings size={13} />
         </button>
         <button
           onClick={onClear}

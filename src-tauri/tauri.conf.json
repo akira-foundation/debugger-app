@@ -12,7 +12,7 @@
     "windows": [
       {
         "title": "Akira Debugger",
-        "width": 1200,
+        "width": 480,
         "height": 800,
         "minWidth": 400,
         "minHeight": 300,
