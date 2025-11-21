@@ -4,6 +4,8 @@ import { isArrayContent, isEloquentModel } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { CollapsibleArray } from './CollapsibleArray'
 import { EloquentModelDisplay } from './EloquentModelDisplay'
+import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
+import { MailableDisplay } from './MailableDisplay'
 
 interface LogEntryProps {
   log: LogEntryType
@@ -84,6 +86,9 @@ export function LogEntry({
           </span>
         </div>
         <span className="text-gray-500 text-[11px] flex-1">{log.timestamp}</span>
+        {log.type.toLowerCase() === 'executed_query' && (
+          <span className="text-gray-400 text-[11px] whitespace-nowrap flex-shrink-0">SQL</span>
+        )}
         <span
           onClick={handleOpenInEditor}
           className="text-gray-600 text-[11px] cursor-pointer hover:text-purple-400 hover:underline transition-colors whitespace-nowrap flex-shrink-0"
@@ -114,6 +119,10 @@ export function LogEntry({
               expandedItems={expandedItems}
               onToggleItem={onToggleItem}
             />
+          ) : log.type.toLowerCase() === 'executed_query' ? (
+            <ExecutedQueryDisplay content={log.content} />
+          ) : log.type.toLowerCase() === 'mailable' ? (
+            <MailableDisplay content={log.content} />
           ) : isArrayContent(log.content as string[]) ? (
             <CollapsibleArray
               logId={log.id}
