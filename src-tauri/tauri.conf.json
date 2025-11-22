@@ -36,7 +36,7 @@
     "active": true,
     "targets": "all",
     "icon": [
-      "../public/icon.svg"
+      "../public/icon.png"
     ]
   }
 }
