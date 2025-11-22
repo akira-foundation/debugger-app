@@ -15,7 +15,7 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
           - os: macos-latest
-            target: aarch64-apple-darwin
+            target: x86_64-apple-darwin
           - os: windows-latest
             target: x86_64-pc-windows-msvc
 
@@ -43,45 +43,48 @@ jobs:
 
       - name: Create Windows ICO icon
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          mkdir -p src-tauri/icons
-          python -c "
-import struct
-with open('public/logo.png', 'rb') as f:
-    png_data = f.read()
-ico_header = struct.pack('<HHH', 0, 1, 1)
-image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22)
-with open('src-tauri/icons/icon.ico', 'wb') as f:
-    f.write(ico_header)
-    f.write(image_dir)
-    f.write(png_data)
-"
+          New-Item -ItemType Directory -Force -Path src-tauri/icons | Out-Null
+          $script = @'
+  import struct
+with open("public/logo.png", "rb") as f:
+  png_data = f.read()
+  ico_header = struct.pack("<HHH", 0, 1, 1)
+  image_dir = struct.pack("<BBBBHHII", 0, 0, 0, 0, 1, 32, len(png_data), 22)
+with open("src-tauri/icons/icon.ico", "wb") as f:
+  f.write(ico_header)
+  f.write(image_dir)
+  f.write(png_data)
+  '@
+          Set-Content -Path make_icon.py -Value $script
+          python make_icon.py
 
       - name: Build application
         run: npm run tauri build
 
       - name: Upload macOS artifacts
         if: runner.os == 'macOS'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: src-tauri/target/release/bundle/dmg/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+uses: softprops/action-gh-release@v1
+with:
+  files: src-tauri/target/release/bundle/dmg/*
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Linux artifacts
-        if: runner.os == 'Linux'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: src-tauri/target/release/bundle/appimage/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+- name: Upload Linux artifacts
+  if: runner.os == 'Linux'
+  uses: softprops/action-gh-release@v1
+  with:
+    files: src-tauri/target/release/bundle/appimage/*
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Windows artifacts
-        if: runner.os == 'Windows'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            src-tauri/target/release/bundle/msi/*
-            src-tauri/target/release/bundle/nsis/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+- name: Upload Windows artifacts
+  if: runner.os == 'Windows'
+  uses: softprops/action-gh-release@v1
+  with:
+    files: |
+      src-tauri/target/release/bundle/msi/*
+      src-tauri/target/release/bundle/nsis/*
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
