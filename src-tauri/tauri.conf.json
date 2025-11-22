@@ -39,11 +39,7 @@
     "active": true,
     "targets": "all",
     "icon": [
-      "icons/icon.png",
-      "icons/icon.ico",
-      "icons/linux.png",
-      "icons/mac/icon.png",
-      "icons/mac/icon@2x.png"
+      "icons/icon.png"
     ]
   }
 }
