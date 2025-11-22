@@ -63,11 +63,13 @@ export function Footer({ logs }: FooterProps) {
     }
 
     try {
-      console.log('Calling backend export_logs with file picker...')
-      const filepath = await invoke<string | null>('export_logs', { content, format })
+      console.log('Opening save dialog for format:', format)
+      const filepath = await invoke<string | null>('open_save_logs_dialog', { format })
 
       if (filepath) {
-        console.log('Export successful!', filepath)
+        console.log('File path selected:', filepath)
+        await invoke('write_logs_to_file', { filepath, content })
+        console.log('Export successful!')
         alert(`Logs exported to:\n${filepath}`)
       } else {
         console.log('Export cancelled by user')

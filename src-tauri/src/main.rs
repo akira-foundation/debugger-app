@@ -11,7 +11,8 @@ use commands::{
     set_always_on_top, show_about, open_in_editor, open_url,
     validate_license, set_license_key, clear_license_cache,
     activate_trial, is_trial_active, get_trial_days_remaining,
-    trial_was_used, clear_trial, get_memory_usage, export_logs
+    trial_was_used, clear_trial, get_memory_usage, open_save_logs_dialog,
+    write_logs_to_file
 };
 
 #[tokio::main]
@@ -36,7 +37,8 @@ async fn main() {
             trial_was_used,
             clear_trial,
             get_memory_usage,
-            export_logs
+            open_save_logs_dialog,
+            write_logs_to_file
         ])
         .setup(|app| {
             let app_handle = app.handle().clone();
