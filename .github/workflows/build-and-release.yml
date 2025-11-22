@@ -28,19 +28,19 @@ jobs:
             "platforms": {
               "darwin-aarch64": {
                 "signature": "",
-                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_universal.dmg"
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_aarch64.dmg"
               },
               "darwin-x86_64": {
                 "signature": "",
-                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_universal.dmg"
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_aarch64.dmg"
               },
               "linux-x86_64": {
                 "signature": "",
-                "url": "${RELEASE_URL}/akira-debugger_${VERSION}_amd64.AppImage.tar.gz"
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_amd64.AppImage"
               },
               "windows-x86_64": {
                 "signature": "",
-                "url": "${RELEASE_URL}/Akira.Debugger_${VERSION}_x64_en-US.msi.zip"
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_x64_en-US.msi"
               }
             }
           }
