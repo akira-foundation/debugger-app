@@ -16,9 +16,7 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            target: x86_64-apple-darwin
-          - os: macos-latest
-            target: aarch64-apple-darwin
+            target: universal-apple-darwin
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
           - os: windows-latest
@@ -103,11 +101,11 @@ jobs:
             "platforms": {
               "darwin-aarch64": {
                 "signature": "",
-                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_aarch64.dmg"
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_universal.dmg"
               },
               "darwin-x86_64": {
                 "signature": "",
-                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_x64.dmg"
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_universal.dmg"
               },
               "linux-x86_64": {
                 "signature": "",
