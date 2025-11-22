@@ -17,6 +17,8 @@ jobs:
         include:
           - os: macos-latest
             target: x86_64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
           - os: windows-latest
@@ -59,6 +61,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET }}
         run: |
+          # Get version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Testing upload for version: ${VERSION}"
+
           # Find the first artifact file to test upload
           ARTIFACT=$(find src-tauri/target/release/bundle -type f \( -name "*.dmg" -o -name "*.AppImage*" -o -name "*.msi" -o -name "*.exe" \) | head -1)
 
@@ -69,8 +75,7 @@ jobs:
 
           echo "Testing upload of: $ARTIFACT"
           FILENAME=$(basename "$ARTIFACT")
-          TIMESTAMP=$(date +%s)
-          OBJECT_KEY="test/${TIMESTAMP}-${FILENAME}"
+          OBJECT_KEY="test/v${VERSION}/${FILENAME}"
 
           echo "Uploading to: s3://debugger-app/${OBJECT_KEY}"
 
@@ -80,3 +85,50 @@ jobs:
             --acl public-read
 
           echo "Test upload completed"
+
+      - name: Create and upload latest.json for test
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          RELEASE_URL="https://debugger-app.sfo3.cdn.digitaloceanspaces.com/test/v${VERSION}"
+
+          cat > latest.json << EOF
+          {
+            "version": "${VERSION}",
+            "notes": "Test Build ${VERSION}",
+            "pub_date": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+            "platforms": {
+              "darwin-aarch64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_aarch64.dmg"
+              },
+              "darwin-x86_64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_x64.dmg"
+              },
+              "linux-x86_64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/akira-debugger_${VERSION}_amd64.AppImage.tar.gz"
+              },
+              "windows-x86_64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/Akira.Debugger_${VERSION}_x64_en-US.msi.zip"
+              }
+            }
+          }
+          EOF
+
+          echo "Created latest.json:"
+          cat latest.json
+
+          echo "Uploading latest.json to test folder"
+          aws s3 cp latest.json "s3://debugger-app/test/v${VERSION}/latest.json" \
+            --endpoint-url https://sfo3.digitaloceanspaces.com \
+            --region us-east-1 \
+            --acl public-read \
+            --content-type application/json
+
+          echo "Test latest.json upload completed"
