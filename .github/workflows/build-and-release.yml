@@ -6,6 +6,52 @@ on:
       - 'v*'
 
 jobs:
+  create-release:
+    name: Create Release Manifest
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create latest.json for updater
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          RELEASE_URL="https://github.com/debugger-akira-io-com/releases/download/v${VERSION}"
+
+          cat > latest.json << EOF
+          {
+            "version": "${VERSION}",
+            "notes": "Release ${VERSION}",
+            "pub_date": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+            "platforms": {
+              "darwin-aarch64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_aarch64.dmg"
+              },
+              "darwin-x86_64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/Akira%20Debugger_${VERSION}_x64.dmg"
+              },
+              "linux-x86_64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/akira-debugger_${VERSION}_amd64.AppImage.tar.gz"
+              },
+              "windows-x86_64": {
+                "signature": "",
+                "url": "${RELEASE_URL}/Akira.Debugger_${VERSION}_x64_en-US.msi.zip"
+              }
+            }
+          }
+          EOF
+          cat latest.json
+
+      - name: Upload latest.json to Digital Ocean Spaces
+        run: |
+          curl -X PUT \
+            -H "Content-Type: application/json" \
+            --data-binary @latest.json \
+            "https://debugger-app.sfo3.digitaloceanspaces.com/latest.json"
+
   build:
     name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -48,6 +94,8 @@ jobs:
           python -c "import struct; png_data = open('public/logo.png', 'rb').read(); ico_header = struct.pack('<HHH', 0, 1, 1); image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22); open('src-tauri/icons/icon.ico', 'wb').write(ico_header + image_dir + png_data)"
 
       - name: Build application
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: npm run tauri build
 
       - name: Upload macOS artifacts
@@ -75,3 +123,9 @@ jobs:
             src-tauri/target/release/bundle/nsis/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts for signing
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ matrix.os }}
+          path: src-tauri/target/release/bundle/

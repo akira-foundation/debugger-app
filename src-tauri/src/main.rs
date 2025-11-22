@@ -6,6 +6,7 @@ mod logger;
 mod menu;
 mod server;
 mod license;
+mod updater;
 
 use commands::{
     set_always_on_top, show_about, open_in_editor, open_url,
@@ -45,6 +46,11 @@ async fn main() {
 
             tokio::spawn(async move {
                 server::start_server(app_handle).await;
+            });
+
+            let app_handle = app.handle().clone();
+            tokio::spawn(async move {
+                updater::check_for_updates(app_handle).await;
             });
 
             Ok(())

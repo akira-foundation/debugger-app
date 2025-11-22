@@ -41,5 +41,13 @@
     "icon": [
       "icons/icon.png"
     ]
+  },
+  "updater": {
+    "active": true,
+    "endpoints": [
+      "https://debugger-app.sfo3.cdn.digitaloceanspaces.com/latest.json"
+    ],
+    "dialog": true,
+    "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJBNzBCRjkyMUU3OTMyOTMKUldTVE1ua2Vrcjl3dXZudGc2ajVQV2UxK1hrY1ovajRicnZJWWplc2tzYjhCMExiSUZpQ0NWOXIK"
   }
 }
