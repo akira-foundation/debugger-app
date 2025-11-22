@@ -33,12 +33,12 @@ export function CollapsibleArray({
         return (
           <div
             key={item.index}
-            className="glass bg-black/30 rounded-lg transition-all backdrop-blur-md overflow-hidden"
+            className="glass bg-white/5 rounded-lg transition-all backdrop-blur-md overflow-hidden border border-white/10"
           >
             {/* Item header with toggle button */}
             <button
               onClick={() => onToggleItem(logId, item.index)}
-              className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-black/20 transition-colors group"
+              className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-white/10 transition-colors group"
             >
               {hasDetails && (
                 <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
@@ -52,7 +52,7 @@ export function CollapsibleArray({
 
             {/* Expanded content */}
             {isExpanded && hasDetails && (
-              <div className="px-4 py-3 space-y-0 bg-black/20">
+              <div className="px-4 py-3 space-y-0 border-t border-white/10">
                 {item.lines.slice(1).map((line, idx) => (
                   <div
                     key={idx}

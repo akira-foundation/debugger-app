@@ -161,7 +161,7 @@ export function LogEntry({
               {log.content.map((line, idx) => (
                 <div
                   key={idx}
-                  className="bg-black/30 px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words"
+                  className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words"
                 >
                   <SyntaxHighlighter text={line} />
                 </div>

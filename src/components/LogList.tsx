@@ -36,7 +36,7 @@ export function LogList({
   return (
     <div
       ref={scrollContainerRef}
-      className="flex-1 overflow-y-auto bg-[#0f0f0f] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#0f0f0f] [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
+      className="flex-1 overflow-y-auto bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-purple-600/40 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-purple-600/60">
       <div className="flex justify-center">
         <div className="w-full max-w-4xl px-3 py-4">
           {logs.length === 0 ? (

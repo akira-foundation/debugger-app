@@ -29,7 +29,7 @@ export function SearchBar({ searchQuery, onSearchChange, isOpen, onToggle }: Sea
   if (!isOpen) return null
 
   return (
-    <div className="px-4 py-2.5 bg-[#0f0f0f] border-b border-white/5">
+    <div className="px-4 py-2.5 bg-transparent border-b border-white/5">
       <div className="flex gap-3 items-center">
         <div className="flex-1">
           <input

@@ -216,11 +216,11 @@ export function SettingsModal({
                     value={licenseKey}
                     onChange={(e) => setLicenseKey(e.target.value)}
                     placeholder="Enter your license key"
-                    className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 font-mono text-sm"
+                    className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 font-mono text-sm"
                   />
                   <button
                     onClick={handleCopyKey}
-                    className="p-2 bg-black/30 hover:bg-black/50 border border-white/10 rounded-lg transition-colors"
+                    className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
                     title="Copy key"
                   >
                     {copied ? (
@@ -239,7 +239,7 @@ export function SettingsModal({
                   value={apiUrl}
                   onChange={(e) => setApiUrl(e.target.value)}
                   placeholder="https://packages.akira-io.com/api/licenses"
-                  className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 font-mono text-sm"
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 font-mono text-sm"
                 />
               </div>
             </div>

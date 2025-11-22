@@ -18,7 +18,7 @@ interface HeaderProps {
 
 export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOpen, onToggleSearch, selectedColor, onSelectColor, onToggleSettings, isTrialActive, trialDaysRemaining }: HeaderProps) {
   return (
-    <header className="flex justify-between items-center px-6 py-2 bg-[#0f0f0f] border-b border-white/5 flex-shrink-0">
+    <header className="flex justify-between items-center px-6 py-2 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
       <div className="flex items-center gap-4">
         {/* Status Indicator with Monitor Icon */}
         <div className="flex items-center gap-2">
@@ -30,7 +30,7 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
             title={isListening ? 'Listening' : 'Offline'}
           />
           {isTrialActive && (
-            <span className="text-xs font-medium text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded">
+            <span className="text-xs font-medium text-yellow-400 border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 rounded">
               Trial {trialDaysRemaining}d
             </span>
           )}

@@ -63,7 +63,7 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
   return (
     <div className="space-y-2">
       {/* Connection Info */}
-      <div className="glass bg-black/30 rounded-lg overflow-hidden">
+      <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
         <div className="px-4 py-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-400">
@@ -77,12 +77,12 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
       </div>
 
       {/* SQL Query */}
-      <div className="glass bg-black/30 rounded-lg overflow-hidden">
-        <div className="px-4 py-2 bg-black/20 border-b border-white/5 flex items-center justify-between">
+      <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
+        <div className="px-4 py-2 bg-white/10 border-b border-white/5 flex items-center justify-between">
           <span className="text-xs font-medium text-gray-400">Query</span>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 rounded bg-black/30 hover:bg-black/50 transition-colors"
+            className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
             title="Copy SQL to clipboard"
           >
             {copied ? (
@@ -99,7 +99,7 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
           </button>
         </div>
         <div className="px-4 py-3">
-          <div className="bg-black/30 px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+          <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
             <SyntaxHighlighter text={formattedSql} />
           </div>
         </div>

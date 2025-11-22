@@ -85,15 +85,15 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] text-white font-sans">
       {/* Header */}
-      <header className="flex items-center gap-4 px-6 py-4 border-b border-white/5 flex-shrink-0">
+      <header className="flex items-center gap-4 px-6 py-2 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
         <button
           onClick={onBack}
           className="p-1 rounded hover:bg-white/10 transition-colors text-gray-400 hover:text-gray-200"
           title="Back"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={13} />
         </button>
-        <h1 className="text-xl font-semibold">License</h1>
+        <h1 className="text-sm font-semibold">License</h1>
       </header>
 
       {/* Content */}
