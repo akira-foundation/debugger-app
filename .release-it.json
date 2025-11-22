@@ -1,0 +1,36 @@
+{
+  "git": {
+    "requireCleanWorkingDir": true,
+    "requireUpstream": false,
+    "requireCommits": false,
+    "commitsInChangelog": false,
+    "changelog": "git log --pretty=format:\"* %s (%h)\" [REV_RANGE]",
+    "tag": true,
+    "tagName": "v${version}",
+    "tagAnnotation": "Release ${version}",
+    "push": true,
+    "pushArgs": "--follow-tags",
+    "pushRepo": "origin"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Release ${version}",
+    "releaseNotes": null,
+    "tokenRef": "GITHUB_TOKEN",
+    "skipChecks": false
+  },
+  "npm": {
+    "publish": false
+  },
+  "hooks": {
+    "before:init": [],
+    "after:bump": "npm run build",
+    "after:release": "echo 'Release ${version} published'"
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "infile": "CHANGELOG.md",
+      "preset": "angular"
+    }
+  }
+}
