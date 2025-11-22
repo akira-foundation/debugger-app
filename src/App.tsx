@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/core'
 import './App.css'
 
 import { Header } from './components/Header'
+import { Footer } from './components/Footer'
 import { SearchBar } from './components/SearchBar'
 import { LogList } from './components/LogList'
 import { LicenseSplash } from './components/LicenseSplash'
@@ -65,7 +66,7 @@ export default function App() {
   useEffect(() => {
     const unlistenLog = listen('log-entry', (event: any) => {
       const logEntry: LogEntry = event.payload
-      setLogs((prev) => [logEntry, ...prev].slice(0, 100))
+      setLogs((prev) => [logEntry, ...prev])
     })
 
     const unlistenLabel = listen('attach-label', (event: any) => {
@@ -254,6 +255,7 @@ export default function App() {
         getLogTypeColor={getLogTypeColor}
         searchQuery={searchQuery}
       />
+      <Footer logs={logs} />
     </div>
   )
 }

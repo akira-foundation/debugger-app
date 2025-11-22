@@ -27,6 +27,9 @@
   "plugins": {
     "shell": {
       "open": true
+    },
+    "fs": {
+      "scope": ["$DOWNLOAD/*", "$HOME/*"]
     }
   },
   "bundle": {

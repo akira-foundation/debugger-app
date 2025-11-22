@@ -1,6 +1,7 @@
-use tauri::Window;
+use tauri::{Window, AppHandle};
 use std::process::Command;
 use crate::license::{LicenseManager, CachedValidation};
+use tauri_plugin_dialog::DialogExt;
 
 #[tauri::command]
 pub async fn set_always_on_top(window: Window, always_on_top: bool) -> Result<(), String> {
@@ -132,4 +133,70 @@ pub async fn open_url(url: String) -> Result<(), String> {
 
     result.map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[tauri::command]
+pub async fn get_memory_usage() -> Result<u64, String> {
+    #[cfg(target_os = "macos")]
+    {
+        use std::process::Command as StdCommand;
+
+        let output = StdCommand::new("ps")
+            .args(&["-p", &std::process::id().to_string(), "-o", "rss="])
+            .output()
+            .map_err(|e| e.to_string())?;
+
+        let rss_str = String::from_utf8_lossy(&output.stdout);
+        let rss_kb: u64 = rss_str.trim().parse()
+            .map_err(|_| "Failed to parse memory usage".to_string())?;
+
+        Ok(rss_kb)
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        Ok(0)
+    }
+}
+
+#[tauri::command]
+pub async fn export_logs(app: AppHandle, content: String, format: String) -> Result<Option<String>, String> {
+    use std::fs;
+    use tokio::sync::oneshot;
+
+    let timestamp = chrono::Local::now().format("%Y-%m-%d");
+    let filename = format!("logs-{}.{}", timestamp, format);
+
+    let filter_name = match format.as_str() {
+        "json" => "JSON files",
+        "csv" => "CSV files",
+        _ => "All files",
+    };
+    let filter_extension = format.as_str();
+
+    let (tx, rx) = oneshot::channel();
+    let mut tx = Some(tx);
+
+    app
+        .dialog()
+        .file()
+        .add_filter(filter_name, &[filter_extension])
+        .set_file_name(&filename)
+        .save_file(move |file_path| {
+            if let Some(tx) = tx.take() {
+                let path_str = file_path.map(|p| p.to_string());
+                let _ = tx.send(path_str);
+            }
+        });
+
+    let filepath = rx.await.ok().flatten();
+
+    match filepath {
+        Some(path) => {
+            fs::write(&path, &content)
+                .map_err(|e| format!("Failed to write file: {}", e))?;
+            Ok(Some(path))
+        }
+        None => Ok(None),
+    }
 }

@@ -11,12 +11,13 @@ use commands::{
     set_always_on_top, show_about, open_in_editor, open_url,
     validate_license, set_license_key, clear_license_cache,
     activate_trial, is_trial_active, get_trial_days_remaining,
-    trial_was_used, clear_trial
+    trial_was_used, clear_trial, get_memory_usage, export_logs
 };
 
 #[tokio::main]
 async fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .menu(menu::build_menu)
         .on_menu_event(|app, menu_event| {
             menu::handle_menu_event(app, menu_event.id());
@@ -33,7 +34,9 @@ async fn main() {
             is_trial_active,
             get_trial_days_remaining,
             trial_was_used,
-            clear_trial
+            clear_trial,
+            get_memory_usage,
+            export_logs
         ])
         .setup(|app| {
             let app_handle = app.handle().clone();
