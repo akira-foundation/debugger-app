@@ -1,6 +1,6 @@
 {
   "productName": "Akira Debugger",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "identifier": "com.akira.debugger",
   "build": {
     "frontendDist": "../dist",
@@ -29,7 +29,10 @@
       "open": true
     },
     "fs": {
-      "scope": ["$DOWNLOAD/*", "$HOME/*"]
+      "scope": [
+        "$DOWNLOAD/*",
+        "$HOME/*"
+      ]
     }
   },
   "bundle": {

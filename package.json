@@ -1,6 +1,6 @@
 {
   "name": "akira-debugger-app",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Akira Debugger — real-time desktop app for Laravel Ray logs.",
   "main": "index.js",
   "engines": {

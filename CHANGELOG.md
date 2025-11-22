@@ -1,5 +1,18 @@
 
 
+# [0.3.0](https://github.com/debugger-akira-io-com/desktop-app/compare/0.2.1...0.3.0) (2025-11-22)
+
+
+### Bug Fixes
+
+* consolidate artifact upload step in release workflow for macOS, Linux, and Windows ([fb2a92b](https://github.com/debugger-akira-io-com/desktop-app/commit/fb2a92bb6e6adbd0d7560f55f64020b60ecc7ab1))
+* update application icons for cross-platform support in tauri configuration ([0952ef8](https://github.com/debugger-akira-io-com/desktop-app/commit/0952ef81836ff217b9da0fa1e30ff00d419752ac))
+
+
+### Features
+
+* sync application version across configuration files and add version syncing script ([6a9248a](https://github.com/debugger-akira-io-com/desktop-app/commit/6a9248a725305a27979c7621f3cbf8a1115813ff))
+
 ## [0.2.1](https://github.com/debugger-akira-io-com/desktop-app/compare/0.2.0...0.2.1) (2025-11-22)
 
 
