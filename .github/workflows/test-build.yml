@@ -54,6 +54,9 @@ jobs:
         run: npm run tauri build
 
       - name: Test upload to Digital Ocean Spaces
+        env:
+          DO_SPACES_KEY: ${{ secrets.DO_SPACES_KEY }}
+          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
         run: |
           # Find the first artifact file to test upload
           ARTIFACT=$(find src-tauri/target/release/bundle -type f \( -name "*.dmg" -o -name "*.AppImage*" -o -name "*.msi" -o -name "*.exe" \) | head -1)
@@ -73,6 +76,7 @@ jobs:
 
           curl -v -X PUT \
             -H "Content-Type: application/octet-stream" \
+            -u "$DO_SPACES_KEY:$DO_SPACES_SECRET" \
             --data-binary "@$ARTIFACT" \
             "https://debugger-app.sfo3.digitaloceanspaces.com/test/${TIMESTAMP}-${ENCODED_FILENAME}"
 
