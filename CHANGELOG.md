@@ -1,3 +1,18 @@
+
+
+# [0.2.0](https://github.com/debugger-akira-io-com/desktop-app/compare/0.1.0...0.2.0) (2025-11-22)
+
+
+### Bug Fixes
+
+* update application icon format from SVG to PNG ([1d36c44](https://github.com/debugger-akira-io-com/desktop-app/commit/1d36c44700bdf5e93e78aed7e133df8ab3ff57ae))
+
+
+### Features
+
+* add CI/CD workflows for building and releasing the application ([0b9cbf8](https://github.com/debugger-akira-io-com/desktop-app/commit/0b9cbf88984adf7280bf261364ccafa7c5fec147))
+* implement trial encryption and decryption functionality ([c9d552a](https://github.com/debugger-akira-io-com/desktop-app/commit/c9d552a66b600c6bf7bdd4461d52910723ba2de2))
+
 # Changelog
 
 
@@ -26,4 +41,3 @@
 * modularize components and improve log rendering efficiency ([b0e6738](https://github.com/debugger-akira-io-com/desktop-app/commit/b0e67386634f091eb990ca77e28a5b46907e8f13))
 * update header title to reflect listening state ([f48c105](https://github.com/debugger-akira-io-com/desktop-app/commit/f48c1059c357d387ec3fe3847a5e3dc189f43413))
 * update UI styles for improved aesthetics and consistency ([3839737](https://github.com/debugger-akira-io-com/desktop-app/commit/38397375443d56b0e77e806c474f9450e7e47625))
-
