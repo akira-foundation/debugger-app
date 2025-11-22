@@ -4,8 +4,8 @@
   "description": "Akira Debugger — real-time desktop app for Laravel logs.",
   "main": "index.js",
   "engines": {
-    "node": ">=20.9.0",
-    "npm": ">=10.0.0"
+    "node": ">=20.19.0",
+    "npm": ">=10.8.2"
   },
   "scripts": {
     "dev": "vite",
