@@ -1,13 +1,16 @@
-name: Build and Release
+name: Test Build
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
+  test-build:
+    name: Test Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -60,31 +63,27 @@ with open("src-tauri/icons/icon.ico", "wb") as f:
           Set-Content -Path make_icon.py -Value $script
           python make_icon.py
 
-      - name: Build application
+      - name: Create Windows ICO icon (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p src-tauri/icons
+          python3 << 'EOF'
+import struct
+with open('public/logo.png', 'rb') as f:
+    png_data = f.read()
+ico_header = struct.pack('<HHH', 0, 1, 1)
+image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22)
+with open('src-tauri/icons/icon.ico', 'wb') as f:
+    f.write(ico_header)
+    f.write(image_dir)
+    f.write(png_data)
+EOF
+
+      - name: Check Rust compilation
+        run: cargo check --manifest-path src-tauri/Cargo.toml
+
+      - name: Lint frontend
+        run: npm run lint --if-present
+
+      - name: Test build
         run: npm run tauri build
-
-      - name: Upload macOS artifacts
-        if: runner.os == 'macOS'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: src-tauri/target/release/bundle/dmg/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Linux artifacts
-        if: runner.os == 'Linux'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: src-tauri/target/release/bundle/appimage/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Windows artifacts
-        if: runner.os == 'Windows'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            src-tauri/target/release/bundle/msi/*
-            src-tauri/target/release/bundle/nsis/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
