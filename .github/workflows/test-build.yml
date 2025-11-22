@@ -66,10 +66,14 @@ jobs:
           echo "Testing upload of: $ARTIFACT"
           FILENAME=$(basename "$ARTIFACT")
           TIMESTAMP=$(date +%s)
+          # URL encode the filename (replace spaces with %20)
+          ENCODED_FILENAME=$(echo "$FILENAME" | sed 's/ /%20/g')
+
+          echo "Uploading to: https://debugger-app.sfo3.digitaloceanspaces.com/test/${TIMESTAMP}-${ENCODED_FILENAME}"
 
           curl -v -X PUT \
             -H "Content-Type: application/octet-stream" \
             --data-binary "@$ARTIFACT" \
-            "https://debugger-app.sfo3.digitaloceanspaces.com/test/${TIMESTAMP}-${FILENAME}"
+            "https://debugger-app.sfo3.digitaloceanspaces.com/test/${TIMESTAMP}-${ENCODED_FILENAME}"
 
           echo "Test upload completed"
