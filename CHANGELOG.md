@@ -1,5 +1,26 @@
 
 
+# [0.4.0](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.3...0.4.0) (2025-11-22)
+
+
+### Bug Fixes
+
+* consolidate Windows ICO icon creation script in build workflows for improved readability ([ccac5c8](https://github.com/debugger-akira-io-com/desktop-app/commit/ccac5c8c633356df5523a51e47bde328f738a5e2))
+* refactor icon generation script in test build workflow for improved readability ([a29a9f0](https://github.com/debugger-akira-io-com/desktop-app/commit/a29a9f07ec5a4ea3210f66e742d3439cbf4b2043))
+* reorder ubuntu configuration in build workflows for consistency ([54a2202](https://github.com/debugger-akira-io-com/desktop-app/commit/54a2202740c9d52a343f1a18748624f65cc460f8))
+* simplify icon generation script in build workflow for clarity ([9f33ff6](https://github.com/debugger-akira-io-com/desktop-app/commit/9f33ff69ee555b9db5d7264b63214f616b9eab11))
+* specify bash shell for Windows ICO icon creation in build workflows ([eb95ec0](https://github.com/debugger-akira-io-com/desktop-app/commit/eb95ec00b3c667f0ff3edc9f860e58294280bd79))
+* streamline icon directory creation in build workflows for consistency ([0f82438](https://github.com/debugger-akira-io-com/desktop-app/commit/0f82438370ccefe912b63f2c0a9ea347c01174f7))
+* streamline Windows ICO icon creation in build workflows for consistency ([889284b](https://github.com/debugger-akira-io-com/desktop-app/commit/889284b003ba66205d0260241eadb375c888af3f))
+* unify icon directory creation in build workflows for consistency ([d17b203](https://github.com/debugger-akira-io-com/desktop-app/commit/d17b203d474f92c36a18575c3ef116a17b81a22f))
+
+
+### Features
+
+* add test build workflow for cross-platform compatibility and icon generation ([9613034](https://github.com/debugger-akira-io-com/desktop-app/commit/961303428f94fe8c4e7fe3b50866dce3915ec088))
+* add updater plugin and configure update functionality ([f2d9142](https://github.com/debugger-akira-io-com/desktop-app/commit/f2d9142d4e78f45bbb09ff52d7ae1863969183f5))
+* implement auto updater functionality with release manifest creation ([e81f53e](https://github.com/debugger-akira-io-com/desktop-app/commit/e81f53e2fe37adb7c72d52df50f5974f26b76cbd))
+
 ## [0.3.3](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.2...0.3.3) (2025-11-22)
 
 
