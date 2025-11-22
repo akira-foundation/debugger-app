@@ -134,27 +134,24 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
 
         {/* Error Notice */}
         {status === 'invalid' && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-6 py-4 max-w-sm text-center space-y-4">
-            <p className="text-xs text-red-300">
-              License validation failed. Please check your internet connection or license key.
-            </p>
+          <div className="  rounded-lg px-5 py-4 w-80 text-center space-y-3">
 
             {licenseService.getTrialUsed() ? (
               <button
                 onClick={onOpenSettings}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors text-sm"
               >
                 <Settings size={16} />
                 Configure License
               </button>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <button
                   onClick={() => {
                     licenseService.activateTrial()
                     window.location.reload()
                   }}
-                  className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm"
+                  className="w-full px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm"
                 >
                   Try 7 Days For Free
                 </button>
@@ -172,11 +169,11 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
                   Buy a License
                 </button>
 
-                <p className="text-xs text-gray-400 pt-2">
+                <p className="text-xs text-gray-400 pt-1">
                   If you already have a license,{' '}
                   <button
                     onClick={onOpenSettings}
-                    className="text-purple-400 hover:text-purple-300 underline"
+                    className="text-purple-400 hover:text-purple-300 underline font-medium"
                   >
                     configure here
                   </button>

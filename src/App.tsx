@@ -9,6 +9,7 @@ import { LogList } from './components/LogList'
 import { LicenseSplash } from './components/LicenseSplash'
 import { LicenseSettings } from './components/LicenseSettings'
 import { useLicenseValidation } from './hooks/useLicenseValidation'
+import { licenseService } from './services/licenseService'
 import type { LogEntry, RayColor, ExpandedItems } from './types'
 
 export default function App() {
@@ -27,10 +28,14 @@ export default function App() {
   const licenseValidation = useLicenseValidation()
   const [licenseValidationComplete, setLicenseValidationComplete] = useState(false)
   const [isValidatingLicense, setIsValidatingLicense] = useState(false)
+  const [isTrialActive, setIsTrialActive] = useState(licenseService.isTrialActive())
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(licenseService.getTrialDaysRemaining())
 
   // Initialize license validation on app mount
   useEffect(() => {
     licenseValidation.validate()
+    setIsTrialActive(licenseService.isTrialActive())
+    setTrialDaysRemaining(licenseService.getTrialDaysRemaining())
   }, [])
 
   // Show splash screen during validation, or if validation fails allow to continue
@@ -195,14 +200,6 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#0f0f0f] text-white font-sans">
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        validation={licenseValidation.validation}
-        onValidationRefresh={licenseValidation.validate}
-      />
-
       {showAbout && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#1a1a1a] rounded-lg p-8 max-w-md w-96 border border-white/10">
@@ -231,6 +228,8 @@ export default function App() {
         selectedColor={selectedColor}
         onSelectColor={setSelectedColor}
         onToggleSettings={() => setShowLicenseSettings(true)}
+        isTrialActive={isTrialActive}
+        trialDaysRemaining={trialDaysRemaining}
       />
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
       <LogList

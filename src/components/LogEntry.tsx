@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
+import { Copy, Check } from 'lucide-react'
 import { LogEntry as LogEntryType, ExpandedItems } from '../types'
 import { isArrayContent, isEloquentModel } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
@@ -54,6 +56,7 @@ export function LogEntry({
   shouldShowExpandButton,
   getLogTypeColor,
 }: LogEntryProps) {
+  const [copied, setCopied] = useState(false)
   const levelStyles = getLevelStyles(log.type)
 
   const handleOpenInEditor = async (e: React.MouseEvent) => {
@@ -66,6 +69,18 @@ export function LogEntry({
       await invoke('open_in_editor', { filePath, line: lineNum })
     } catch (err) {
       console.error('Failed to open file in editor:', err)
+    }
+  }
+
+  const handleCopyLog = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const logContent = log.content.join('\n')
+    try {
+      await navigator.clipboard.writeText(logContent)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy log:', err)
     }
   }
 
@@ -96,6 +111,17 @@ export function LogEntry({
         >
           {log.location}
         </span>
+        <button
+          onClick={handleCopyLog}
+          className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+          title="Copy log content"
+        >
+          {copied ? (
+            <Check size={13} className="text-green-400" />
+          ) : (
+            <Copy size={13} className="text-gray-400 hover:text-gray-300" />
+          )}
+        </button>
         {shouldShowExpandButton && (
           <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0 text-sm">
             {isExpanded ? '▼' : '▶'}

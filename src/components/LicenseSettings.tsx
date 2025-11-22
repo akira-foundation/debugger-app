@@ -15,6 +15,12 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
   const [licenseKey, setLicenseKey] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [isTrialActive] = useState(licenseService.isTrialActive())
+  const [trialDaysRemaining] = useState(licenseService.getTrialDaysRemaining())
+  const [trialStartDate] = useState(() => {
+    const trialStart = localStorage.getItem('akira_trial_start')
+    return trialStart ? new Date(trialStart) : null
+  })
 
   const handleLicenseKeyChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const key = e.target.value
@@ -93,6 +99,41 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
       {/* Content */}
       <div className="flex-1 overflow-auto px-6 py-6">
         <div className="max-w-2xl space-y-6">
+          {/* Trial Status */}
+          {isTrialActive && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-white">Trial Mode</h2>
+
+              <div className="border rounded-lg p-6 bg-yellow-500/10 border-yellow-500/30">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Status</span>
+                    <span className="text-sm font-semibold text-yellow-400">ACTIVE</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">Days Remaining</span>
+                    <span className={`text-sm font-mono font-semibold ${
+                      trialDaysRemaining <= 2 ? 'text-red-400' : 'text-yellow-400'
+                    }`}>
+                      {trialDaysRemaining} days
+                    </span>
+                  </div>
+
+                  {trialStartDate && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">Started</span>
+                      <span className="text-sm font-mono text-gray-300">
+                        {trialStartDate.toLocaleDateString()}{' '}
+                        {trialStartDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* License Status */}
           {validation && validation.license && (
             <div className="space-y-4">
