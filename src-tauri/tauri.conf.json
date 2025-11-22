@@ -48,7 +48,8 @@
     "targets": "all",
     "icon": [
       "icons/icon.png",
-      "icons/icon.ico"
+      "icons/icon.ico",
+      "icons/mac/icon.icns"
     ]
   }
 }
