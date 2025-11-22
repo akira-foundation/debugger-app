@@ -20,6 +20,7 @@ use commands::{
 async fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .menu(menu::build_menu)
         .on_menu_event(|app, menu_event| {
             menu::handle_menu_event(app, menu_event.id());

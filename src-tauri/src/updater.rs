@@ -1,33 +1,25 @@
 use tauri::AppHandle;
-use tauri::updater::Update;
+use tauri_plugin_updater::UpdaterExt;
 
 pub async fn check_for_updates(app: AppHandle) {
-    match app.updater().check().await {
-        Ok(update) => {
-            if update.is_update_available() {
-                log_update_available(&update);
+    match app.updater().expect("failed to create updater").check().await {
+        Ok(Some(update)) => {
+            println!("Update available: {}", update.version);
 
-                if let Err(e) = install_update(app, update).await {
-                    eprintln!("Failed to install update: {}", e);
-                }
+            if let Err(e) = update.download_and_install(
+                |_chunk_len, _total| {},
+                || {}
+            ).await {
+                eprintln!("Failed to install update: {}", e);
+            } else {
+                app.restart();
             }
+        }
+        Ok(None) => {
+            println!("App is up to date");
         }
         Err(e) => {
             eprintln!("Failed to check for updates: {}", e);
         }
     }
-}
-
-async fn install_update(app: AppHandle, update: Update) -> Result<(), Box<dyn std::error::Error>> {
-    update.download_and_install().await?;
-    app.restart();
-    Ok(())
-}
-
-fn log_update_available(update: &Update) {
-    println!(
-        "Update available: {} (current: {})",
-        update.latest_version(),
-        update.current_version()
-    );
 }
