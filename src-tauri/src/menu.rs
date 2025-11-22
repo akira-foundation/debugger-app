@@ -3,7 +3,7 @@ use tauri::{AppHandle, Emitter, Manager};
 
 pub fn build_menu(app_handle: &AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wry>> {
     // Create about menu item
-    let about_item = MenuItemBuilder::new("About Akira Debugger")
+    let about_item = MenuItemBuilder::new("About")
         .id("about")
         .enabled(true)
         .build(app_handle)?;

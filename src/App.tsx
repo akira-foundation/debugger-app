@@ -211,16 +211,18 @@ export default function App() {
     <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] text-white font-sans">
       {showAbout && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#1a1a1a] rounded-lg p-8 max-w-md w-96 border border-white/10">
-            <h2 className="text-2xl font-bold mb-4">Akira Debugger</h2>
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              Version 0.1.0<br /><br />
-              A lightweight debugging tool for PHP applications.<br /><br />
+          <div className="bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] rounded-lg p-8 max-w-md w-96 border border-white/10">
+            <h2 className="text-2xl font-bold mb-2 text-white">Akira Debugger</h2>
+            <p className="text-xs text-gray-500 mb-6">v0.1.0</p>
+            <p className="text-sm text-gray-400 mb-4 leading-relaxed">
+              A lightweight debugging tool for PHP applications.
+            </p>
+            <p className="text-sm text-gray-400 mb-6 leading-relaxed">
               Monitor and analyze application logs in real-time.
             </p>
             <button
               onClick={() => setShowAbout(false)}
-              className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors cursor-pointer"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors cursor-pointer text-sm"
             >
               Close
             </button>

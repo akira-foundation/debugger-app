@@ -63,7 +63,7 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
   return (
     <div className="space-y-2">
       {/* Connection Info */}
-      <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
+      <div className="rounded-lg overflow-hidden border border-white/10">
         <div className="px-4 py-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-400">
@@ -77,8 +77,8 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
       </div>
 
       {/* SQL Query */}
-      <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
-        <div className="px-4 py-2 bg-white/10 border-b border-white/5 flex items-center justify-between">
+      <div className="rounded-lg overflow-hidden border border-white/10">
+        <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors">
           <span className="text-xs font-medium text-gray-400">Query</span>
           <button
             onClick={handleCopy}

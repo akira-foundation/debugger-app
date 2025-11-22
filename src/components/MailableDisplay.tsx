@@ -50,7 +50,7 @@ export function MailableDisplay({ content }: MailableDisplayProps) {
     <div className="space-y-2">
       {/* Subject */}
       {subject && (
-        <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
+        <div className="rounded-lg overflow-hidden border border-white/10">
           <div className="px-4 py-2">
             <span className="text-xs text-gray-400">Subject: </span>
             <span className="text-sm text-gray-200 font-mono">{subject}</span>
@@ -59,7 +59,7 @@ export function MailableDisplay({ content }: MailableDisplayProps) {
       )}
 
       {/* Recipients Info */}
-      <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
+      <div className="rounded-lg overflow-hidden border border-white/10">
         <div className="px-4 py-3 space-y-2 text-xs">
           {from && from.length > 0 && (
             <div className="flex gap-2">
@@ -90,8 +90,8 @@ export function MailableDisplay({ content }: MailableDisplayProps) {
 
       {/* HTML Content */}
       {html && (
-        <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
-          <div className="px-4 py-2 bg-white/10 border-b border-white/5 flex items-center justify-between">
+        <div className="rounded-lg overflow-hidden border border-white/10">
+          <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors">
             <span className="text-xs font-medium text-gray-400">HTML Content</span>
             <button
               onClick={handleCopy}

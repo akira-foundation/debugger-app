@@ -75,10 +75,10 @@ export function EloquentModelDisplay({
 
       {/* Attributes Section */}
       {attributeLines.length > 0 && (
-        <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
+        <div className="rounded-lg overflow-hidden border border-white/10">
           <button
             onClick={() => setIsAttributesExpanded(!isAttributesExpanded)}
-            className="w-full px-4 py-2 bg-white/10 border-b border-white/5 hover:bg-white/15 transition-colors flex items-center justify-between"
+            className="w-full px-4 py-2 border-b border-white/5 hover:bg-white/5 transition-colors flex items-center justify-between"
           >
             <span className="text-xs font-medium text-gray-400">Attributes</span>
             <span className="text-gray-500 text-sm">

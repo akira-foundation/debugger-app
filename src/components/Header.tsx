@@ -64,6 +64,7 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
           </div>
         </div>
       </div>
+      <div className="flex-1" />
       <div className="flex items-center gap-0.5">
         <button
           onClick={onToggleSearch}
