@@ -36,7 +36,11 @@
     "active": true,
     "targets": "all",
     "icon": [
-      "../public/icon.png"
+      "icons/icon.png",
+      "icons/icon.ico",
+      "icons/linux.png",
+      "icons/mac/icon.png",
+      "icons/mac/icon@2x.png"
     ]
   }
 }
