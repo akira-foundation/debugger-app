@@ -45,18 +45,7 @@ jobs:
         run: mkdir -p src-tauri/icons
 
       - name: Create Windows ICO icon
-        run: |
-          python -c "
-import struct
-with open('public/logo.png', 'rb') as f:
-    png_data = f.read()
-ico_header = struct.pack('<HHH', 0, 1, 1)
-image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22)
-with open('src-tauri/icons/icon.ico', 'wb') as f:
-    f.write(ico_header)
-    f.write(image_dir)
-    f.write(png_data)
-"
+        run: python -c "import struct; png_data = open('public/logo.png', 'rb').read(); ico_header = struct.pack('<HHH', 0, 1, 1); image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22); open('src-tauri/icons/icon.ico', 'wb').write(ico_header + image_dir + png_data)"
 
       - name: Build application
         run: npm run tauri build
