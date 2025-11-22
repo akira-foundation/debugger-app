@@ -1,5 +1,15 @@
 
 
+## [0.3.2](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.1...0.3.2) (2025-11-22)
+
+
+### Bug Fixes
+
+* update build-and-release.yml for cross-platform compatibility and improve icon generation script ([754830d](https://github.com/debugger-akira-io-com/desktop-app/commit/754830d52af2a7f3a1470b64e956a226cb4b0da2))
+* update icon generation for cross-platform support and add ICO format ([2257ab2](https://github.com/debugger-akira-io-com/desktop-app/commit/2257ab2ead758629cae1e5293251d7e6f9156a25))
+* update icon generation for cross-platform support and add ICO format ([fe3a166](https://github.com/debugger-akira-io-com/desktop-app/commit/fe3a166c1bdb4fc9154abeeb602ee1713a1ee9c0))
+* update Node.js and npm versions in .nvmrc and package.json ([5e03786](https://github.com/debugger-akira-io-com/desktop-app/commit/5e0378633cc97d2760349ec6aa2201607b4248df))
+
 ## [0.3.1](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.0...0.3.1) (2025-11-22)
 
 
