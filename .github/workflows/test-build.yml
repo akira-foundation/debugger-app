@@ -44,28 +44,11 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Create Windows ICO icon
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path src-tauri/icons | Out-Null
-          python << 'EOF'
-import struct
-with open('public/logo.png', 'rb') as f:
-    png_data = f.read()
-ico_header = struct.pack('<HHH', 0, 1, 1)
-image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22)
-with open('src-tauri/icons/icon.ico', 'wb') as f:
-    f.write(ico_header)
-    f.write(image_dir)
-    f.write(png_data)
-EOF
+      - name: Create icons directory
+        run: mkdir -p src-tauri/icons
 
-      - name: Create Windows ICO icon (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          mkdir -p src-tauri/icons
-          python3 << 'EOF'
+      - name: Create Windows ICO icon
+        run: python << 'EOF'
 import struct
 with open('public/logo.png', 'rb') as f:
     png_data = f.read()

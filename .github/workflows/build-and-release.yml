@@ -41,12 +41,12 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Create icons directory
+        run: mkdir -p src-tauri/icons
+
       - name: Create Windows ICO icon
         if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path src-tauri/icons | Out-Null
-          python << 'EOF'
+        run: python << 'EOF'
 import struct
 with open('public/logo.png', 'rb') as f:
     png_data = f.read()
