@@ -16,7 +16,9 @@ jobs:
       - name: Create latest.json for updater
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          RELEASE_URL="https://github.com/debugger-akira-io-com/releases/download/v${VERSION}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/v${VERSION}"
 
           cat > latest.json << EOF
           {
@@ -47,10 +49,18 @@ jobs:
 
       - name: Upload latest.json to Digital Ocean Spaces
         run: |
-          curl -X PUT \
+          if [ -z "${{ env.VERSION }}" ]; then
+            echo "ERROR: VERSION not set"
+            exit 1
+          fi
+
+          echo "Uploading latest.json for version ${{ env.VERSION }}"
+          curl -v -X PUT \
             -H "Content-Type: application/json" \
             --data-binary @latest.json \
             https://debugger-app.sfo3.digitaloceanspaces.com/latest.json
+
+          echo "Upload completed"
 
   build:
     name: Build on ${{ matrix.os }}
@@ -87,11 +97,6 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Create Windows ICO icon
-        shell: bash
-        run: |
-          mkdir -p src-tauri/icons 2>/dev/null || true
-          python -c "import struct; png_data = open('public/logo.png', 'rb').read(); ico_header = struct.pack('<HHH', 0, 1, 1); image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22); open('src-tauri/icons/icon.ico', 'wb').write(ico_header + image_dir + png_data)"
 
       - name: Build application
         env:
@@ -129,3 +134,26 @@ jobs:
         with:
           name: artifacts-${{ matrix.os }}
           path: src-tauri/target/release/bundle/
+
+      - name: Test upload to Digital Ocean Spaces
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Testing upload with VERSION: ${VERSION}"
+
+          # Find the first artifact file to test upload
+          ARTIFACT=$(find src-tauri/target/release/bundle -type f \( -name "*.dmg" -o -name "*.AppImage*" -o -name "*.msi" -o -name "*.exe" \) | head -1)
+
+          if [ -z "$ARTIFACT" ]; then
+            echo "No artifacts found to upload"
+            exit 1
+          fi
+
+          echo "Testing upload of: $ARTIFACT"
+          FILENAME=$(basename "$ARTIFACT")
+
+          curl -v -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@$ARTIFACT" \
+            "https://debugger-app.sfo3.digitaloceanspaces.com/test/${FILENAME}"
+
+          echo "Test upload completed"

@@ -44,12 +44,6 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Create Windows ICO icon
-        shell: bash
-        run: |
-          mkdir -p src-tauri/icons 2>/dev/null || true
-          python -c "import struct; png_data = open('public/logo.png', 'rb').read(); ico_header = struct.pack('<HHH', 0, 1, 1); image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22); open('src-tauri/icons/icon.ico', 'wb').write(ico_header + image_dir + png_data)"
-
       - name: Check Rust compilation
         run: cargo check --manifest-path src-tauri/Cargo.toml
 
@@ -58,3 +52,24 @@ jobs:
 
       - name: Test build
         run: npm run tauri build
+
+      - name: Test upload to Digital Ocean Spaces
+        run: |
+          # Find the first artifact file to test upload
+          ARTIFACT=$(find src-tauri/target/release/bundle -type f \( -name "*.dmg" -o -name "*.AppImage*" -o -name "*.msi" -o -name "*.exe" \) | head -1)
+
+          if [ -z "$ARTIFACT" ]; then
+            echo "No artifacts found to upload"
+            exit 0
+          fi
+
+          echo "Testing upload of: $ARTIFACT"
+          FILENAME=$(basename "$ARTIFACT")
+          TIMESTAMP=$(date +%s)
+
+          curl -v -X PUT \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@$ARTIFACT" \
+            "https://debugger-app.sfo3.digitaloceanspaces.com/test/${TIMESTAMP}-${FILENAME}"
+
+          echo "Test upload completed"
