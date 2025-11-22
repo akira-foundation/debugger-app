@@ -50,7 +50,7 @@ jobs:
           curl -X PUT \
             -H "Content-Type: application/json" \
             --data-binary @latest.json \
-            "https://debugger-app.sfo3.digitaloceanspaces.com/latest.json"
+            https://debugger-app.sfo3.digitaloceanspaces.com/latest.json
 
   build:
     name: Build on ${{ matrix.os }}
