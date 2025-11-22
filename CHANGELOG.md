@@ -1,5 +1,12 @@
 
 
+## [0.3.3](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.2...0.3.3) (2025-11-22)
+
+
+### Bug Fixes
+
+* format build-and-release.yml for improved readability ([d61f95f](https://github.com/debugger-akira-io-com/desktop-app/commit/d61f95fe20984ce91fe55003ac6659c8292532c8))
+
 ## [0.3.2](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.1...0.3.2) (2025-11-22)
 
 
