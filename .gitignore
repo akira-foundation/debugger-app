@@ -10,3 +10,4 @@ src-tauri/target/
 .env
 .env.local
 /.idea/git_toolbox_prj.xml
+./.idea

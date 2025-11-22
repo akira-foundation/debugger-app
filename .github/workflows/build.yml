@@ -33,12 +33,20 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Install imagemagick (for icon conversion)
-        run: sudo apt-get install -y imagemagick
-
-      - name: Create Windows ICO icon
+      - name: Create Windows ICO icon (all platforms)
         run: |
-          convert public/logo.png -define icon:auto-resize=256,128,96,64,48,32,16 src-tauri/icons/icon.ico || true
+          mkdir -p src-tauri/icons
+          python3 << 'EOF'
+import struct
+with open('public/logo.png', 'rb') as f:
+    png_data = f.read()
+ico_header = struct.pack('<HHH', 0, 1, 1)
+image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22)
+with open('src-tauri/icons/icon.ico', 'wb') as f:
+    f.write(ico_header)
+    f.write(image_dir)
+    f.write(png_data)
+EOF
 
       - name: Check Rust compilation
         run: cargo check --manifest-path src-tauri/Cargo.toml
