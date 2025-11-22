@@ -11,6 +11,7 @@ import { LicenseSplash } from './components/LicenseSplash'
 import { LicenseSettings } from './components/LicenseSettings'
 import { useLicenseValidation } from './hooks/useLicenseValidation'
 import { backendLicenseService } from './services/backendLicenseService'
+import { APP_VERSION } from './version'
 import type { LogEntry, RayColor, ExpandedItems } from './types'
 
 export default function App() {
@@ -214,7 +215,7 @@ export default function App() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] rounded-lg p-8 max-w-md w-96 border border-white/10">
             <h2 className="text-2xl font-bold mb-2 text-white">Akira Debugger</h2>
-            <p className="text-xs text-gray-500 mb-6">v0.1.0</p>
+            <p className="text-xs text-gray-500 mb-6">v{APP_VERSION}</p>
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
               A lightweight debugging tool for PHP applications.
             </p>

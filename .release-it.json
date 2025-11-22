@@ -1,4 +1,7 @@
 {
+  "hooks": {
+    "after:bump": "node scripts/sync-version.js"
+  },
   "git": {
     "commitMessage": "chore: release v${version}",
     "requireCommits": false,
