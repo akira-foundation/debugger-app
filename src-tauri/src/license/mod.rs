@@ -4,6 +4,7 @@ pub mod cache;
 pub mod trial;
 pub mod validator;
 pub mod manager;
+pub mod encryption;
 
 pub use cache::CachedValidation;
 pub use manager::LicenseManager;

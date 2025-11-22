@@ -22,4 +22,7 @@ pub enum LicenseError {
 
     #[error("Directory error")]
     DirectoryError,
+
+    #[error("Encryption error: {0}")]
+    EncryptionError(String),
 }

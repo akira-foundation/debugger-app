@@ -77,14 +77,8 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
     <div className="fixed inset-0 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] flex items-center justify-center z-50">
       <div className="flex flex-col items-center gap-8">
         {/* Logo/Icon */}
-        <div className="w-24 h-24 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-2xl">
-          <svg
-            className="w-12 h-12 text-white"
-            viewBox="0 0 48.7 48.7"
-            fill="currentColor"
-          >
-            <path d="M0,24.35C0,16.8,0,13,1.22,10A16,16,0,0,1,10,1.22C13,0,16.8,0,24.35,0h0C31.9,0,35.71,0,38.72,1.22A16,16,0,0,1,47.48,10c1.22,3,1.22,6.82,1.22,14.37h0c0,7.55,0,11.36-1.22,14.37a16,16,0,0,1-8.76,8.76c-3,1.22-6.82,1.22-14.37,1.22h0C16.8,48.7,13,48.7,10,47.48a16,16,0,0,1-8.76-8.76C0,35.71,0,31.9,0,24.35Z" />
-          </svg>
+        <div className="w-24 h-24  flex items-center justify-center">
+         <img src="/icon.png" alt="Akira Logo" className="w-16 h-16" />
         </div>
 
         {/* Status Indicator */}

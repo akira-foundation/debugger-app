@@ -3,6 +3,7 @@ use serde_json::{json, Value};
 use std::fs;
 use std::path::PathBuf;
 use crate::license::error::LicenseError;
+use crate::license::encryption::TrialEncryption;
 
 pub struct TrialManager {
     trial_file: PathBuf,
@@ -24,7 +25,8 @@ impl TrialManager {
         });
 
         let json = serde_json::to_string_pretty(&trial_data)?;
-        fs::write(&self.trial_file, json)?;
+        let encrypted = TrialEncryption::encrypt(&json)?;
+        fs::write(&self.trial_file, encrypted)?;
         Ok(())
     }
 
@@ -34,12 +36,14 @@ impl TrialManager {
         }
 
         if let Ok(contents) = fs::read_to_string(&self.trial_file) {
-            if let Ok(data) = serde_json::from_str::<Value>(&contents) {
-                if let Some(started_at_str) = data.get("started_at").and_then(|v| v.as_str()) {
-                    if let Ok(started_at) = DateTime::parse_from_rfc3339(started_at_str) {
-                        let start = started_at.with_timezone(&Utc);
-                        let days_elapsed = (Utc::now() - start).num_days();
-                        return days_elapsed < 7;
+            if let Ok(decrypted) = TrialEncryption::decrypt(&contents) {
+                if let Ok(data) = serde_json::from_str::<Value>(&decrypted) {
+                    if let Some(started_at_str) = data.get("started_at").and_then(|v| v.as_str()) {
+                        if let Ok(started_at) = DateTime::parse_from_rfc3339(started_at_str) {
+                            let start = started_at.with_timezone(&Utc);
+                            let days_elapsed = (Utc::now() - start).num_days();
+                            return days_elapsed < 7;
+                        }
                     }
                 }
             }
@@ -53,12 +57,14 @@ impl TrialManager {
         }
 
         if let Ok(contents) = fs::read_to_string(&self.trial_file) {
-            if let Ok(data) = serde_json::from_str::<Value>(&contents) {
-                if let Some(started_at_str) = data.get("started_at").and_then(|v| v.as_str()) {
-                    if let Ok(started_at) = DateTime::parse_from_rfc3339(started_at_str) {
-                        let start = started_at.with_timezone(&Utc);
-                        let days_elapsed = (Utc::now() - start).num_days();
-                        return std::cmp::max(0, 7 - days_elapsed);
+            if let Ok(decrypted) = TrialEncryption::decrypt(&contents) {
+                if let Ok(data) = serde_json::from_str::<Value>(&decrypted) {
+                    if let Some(started_at_str) = data.get("started_at").and_then(|v| v.as_str()) {
+                        if let Ok(started_at) = DateTime::parse_from_rfc3339(started_at_str) {
+                            let start = started_at.with_timezone(&Utc);
+                            let days_elapsed = (Utc::now() - start).num_days();
+                            return std::cmp::max(0, 7 - days_elapsed);
+                        }
                     }
                 }
             }
