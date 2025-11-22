@@ -16,11 +16,14 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            target: universal-apple-darwin
+            target: x86_64-apple-darwin
+            build_args: "--target x86_64-apple-darwin,aarch64-apple-darwin"
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            build_args: ""
           - os: windows-latest
             target: x86_64-pc-windows-msvc
+            build_args: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +36,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.target }},aarch64-apple-darwin
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -51,7 +54,7 @@ jobs:
         run: npm run lint --if-present
 
       - name: Test build
-        run: npm run tauri build
+        run: npm run tauri build ${{ matrix.build_args }}
 
       - name: Test upload to Digital Ocean Spaces
         shell: bash
