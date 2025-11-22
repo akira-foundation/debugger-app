@@ -49,19 +49,17 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path src-tauri/icons | Out-Null
-          $script = @'
+          python << 'EOF'
 import struct
-with open("public/logo.png", "rb") as f:
-  png_data = f.read()
-  ico_header = struct.pack("<HHH", 0, 1, 1)
-  image_dir = struct.pack("<BBBBHHII", 0, 0, 0, 0, 1, 32, len(png_data), 22)
-with open("src-tauri/icons/icon.ico", "wb") as f:
-  f.write(ico_header)
-  f.write(image_dir)
-  f.write(png_data)
-'@
-          Set-Content -Path make_icon.py -Value $script
-          python make_icon.py
+with open('public/logo.png', 'rb') as f:
+    png_data = f.read()
+ico_header = struct.pack('<HHH', 0, 1, 1)
+image_dir = struct.pack('<BBBBHHII', 0, 0, 0, 0, 1, 32, len(png_data), 22)
+with open('src-tauri/icons/icon.ico', 'wb') as f:
+    f.write(ico_header)
+    f.write(image_dir)
+    f.write(png_data)
+EOF
 
       - name: Create Windows ICO icon (Linux/macOS)
         if: runner.os != 'Windows'
