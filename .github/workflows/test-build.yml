@@ -122,8 +122,8 @@ jobs:
           echo "Created latest.json:"
           cat latest.json
 
-          echo "Uploading latest.json to test folder"
-          aws s3 cp latest.json "s3://debugger-app/test/v${VERSION}/latest.json" \
+          echo "Uploading latest.json to test root"
+          aws s3 cp latest.json "s3://debugger-app/test/latest.json" \
             --endpoint-url https://sfo3.digitaloceanspaces.com \
             --region us-east-1 \
             --acl public-read \
