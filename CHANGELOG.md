@@ -1,5 +1,12 @@
 
 
+## [0.2.1](https://github.com/debugger-akira-io-com/desktop-app/compare/0.2.0...0.2.1) (2025-11-22)
+
+
+### Bug Fixes
+
+* update Node.js version to 20 in CI configurations and package files ([1dd8c27](https://github.com/debugger-akira-io-com/desktop-app/commit/1dd8c27944c7bd7859dd4c30d5f2f31f4a1861fc))
+
 # [0.2.0](https://github.com/debugger-akira-io-com/desktop-app/compare/0.1.0...0.2.0) (2025-11-22)
 
 
