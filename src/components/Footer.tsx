@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Download, ChevronUp } from 'lucide-react'
 import { invoke } from '@tauri-apps/api/core'
+import { APP_VERSION } from '../version'
 
 interface FooterProps {
   logs: any[]
 }
-
-const APP_VERSION = '0.1.0'
 
 export function Footer({ logs }: FooterProps) {
   const [memoryUsage, setMemoryUsage] = useState(0)
