@@ -1,3 +1,4 @@
+# Changelog
 
 
 # 0.1.0 (2025-11-22)
@@ -26,4 +27,3 @@
 * update header title to reflect listening state ([f48c105](https://github.com/debugger-akira-io-com/desktop-app/commit/f48c1059c357d387ec3fe3847a5e3dc189f43413))
 * update UI styles for improved aesthetics and consistency ([3839737](https://github.com/debugger-akira-io-com/desktop-app/commit/38397375443d56b0e77e806c474f9450e7e47625))
 
-# Changelog
