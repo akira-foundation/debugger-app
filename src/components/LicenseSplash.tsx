@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Settings } from 'lucide-react'
 import { invoke } from '@tauri-apps/api/core'
 import { CachedLicenseValidation } from '../types/license'
-import { licenseService } from '../services/licenseService'
+import { backendLicenseService } from '../services/backendLicenseService'
 
 interface LicenseSplashProps {
   onValidationComplete: (validation: CachedLicenseValidation | null) => void
@@ -13,15 +13,17 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
   const [status, setStatus] = useState<'validating' | 'offline' | 'invalid' | 'valid'>('validating')
   const [message, setMessage] = useState('Validating license...')
   const [validation, setValidation] = useState<CachedLicenseValidation | null>(null)
+  const [trialWasUsed, setTrialWasUsed] = useState(false)
 
   useEffect(() => {
     const validateLicense = async () => {
       try {
         setMessage('Validating license...')
-        const result = await licenseService.validate()
+        const result = await backendLicenseService.validate()
         setValidation(result)
 
-        if (licenseService.isValid(result)) {
+        // Check if license is valid
+        if (result.valid && result.license) {
           setStatus('valid')
           setMessage(
             result.isOnline
@@ -38,19 +40,26 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
           setTimeout(() => {
             onValidationComplete(result)
           }, 2000)
-        } else if (licenseService.isTrialActive()) {
-          setStatus('valid')
-          const daysRemaining = licenseService.getTrialDaysRemaining()
-          setMessage(`✓ Trial mode (${daysRemaining} days remaining)`)
-          setTimeout(() => {
-            onValidationComplete(result)
-          }, 1000)
         } else {
-          setStatus('invalid')
-          setMessage(licenseService.getErrorMessage(result))
-          setTimeout(() => {
-            validateLicense()
-          }, 3000)
+          // Check if trial is active
+          const isTrial = await backendLicenseService.isTrialActive()
+          const wasTrialUsed = await backendLicenseService.trialWasUsed()
+          setTrialWasUsed(wasTrialUsed)
+
+          if (isTrial) {
+            setStatus('valid')
+            const daysRemaining = await backendLicenseService.getTrialDaysRemaining()
+            setMessage(`✓ Trial mode (${daysRemaining} days remaining)`)
+            setTimeout(() => {
+              onValidationComplete(result)
+            }, 1000)
+          } else {
+            setStatus('invalid')
+            setMessage('License validation failed')
+            setTimeout(() => {
+              validateLicense()
+            }, 3000)
+          }
         }
       } catch (error) {
         setStatus('invalid')
@@ -136,10 +145,10 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
         {status === 'invalid' && (
           <div className="  rounded-lg px-5 py-4 w-80 text-center space-y-3">
 
-            {licenseService.getTrialUsed() ? (
+            {trialWasUsed ? (
               <button
                 onClick={onOpenSettings}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors text-sm"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors text-sm cursor-pointer"
               >
                 <Settings size={16} />
                 Configure License
@@ -147,24 +156,20 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
             ) : (
               <div className="space-y-2.5">
                 <button
-                  onClick={() => {
-                    licenseService.activateTrial()
+                  onClick={async () => {
+                    await backendLicenseService.activateTrial()
                     window.location.reload()
                   }}
-                  className="w-full px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm"
+                  className="w-full px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm cursor-pointer"
                 >
                   Try 7 Days For Free
                 </button>
 
                 <button
                   onClick={async () => {
-                    try {
-                      await invoke('open_url', { url: 'https://packages.akira-io.com/login' })
-                    } catch (error) {
-                      console.error('Failed to open URL:', error)
-                    }
+                    await invoke('open_url', { url: 'https://packages.akira-io.com/login' })
                   }}
-                  className="w-full px-4 py-2 bg-transparent border border-white/20 hover:border-white/40 text-white font-medium rounded-lg transition-colors text-sm"
+                  className="w-full px-4 py-2 bg-transparent border border-white/20 hover:border-white/40 text-white font-medium rounded-lg transition-colors text-sm cursor-pointer"
                 >
                   Buy a License
                 </button>
@@ -173,7 +178,7 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
                   If you already have a license,{' '}
                   <button
                     onClick={onOpenSettings}
-                    className="text-purple-400 hover:text-purple-300 underline font-medium"
+                    className="text-purple-400 hover:text-purple-300 underline font-medium cursor-pointer"
                   >
                     configure here
                   </button>

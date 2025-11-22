@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { invoke } from '@tauri-apps/api/core'
 import { CachedLicenseValidation, LicenseStatus } from '../types/license'
-import { licenseService } from '../services/licenseService'
+import { backendLicenseService } from '../services/backendLicenseService'
 
 interface LicenseSettingsProps {
   onBack: () => void
@@ -15,12 +15,29 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
   const [licenseKey, setLicenseKey] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [isTrialActive] = useState(licenseService.isTrialActive())
-  const [trialDaysRemaining] = useState(licenseService.getTrialDaysRemaining())
-  const [trialStartDate] = useState(() => {
-    const trialStart = localStorage.getItem('akira_trial_start')
-    return trialStart ? new Date(trialStart) : null
-  })
+  const [isTrialActive, setIsTrialActive] = useState(false)
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(0)
+  const [trialStartDate, setTrialStartDate] = useState<Date | null>(null)
+
+  useEffect(() => {
+    const loadTrialInfo = async () => {
+      try {
+        const active = await backendLicenseService.isTrialActive()
+        const daysRemaining = await backendLicenseService.getTrialDaysRemaining()
+        setIsTrialActive(active)
+        setTrialDaysRemaining(Number(daysRemaining))
+        if (active) {
+          const start = new Date()
+          start.setDate(start.getDate() - (7 - Number(daysRemaining)))
+          setTrialStartDate(start)
+        }
+      } catch (error) {
+        console.error('Failed to load trial info:', error)
+      }
+    }
+
+    loadTrialInfo()
+  }, [])
 
   const handleLicenseKeyChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const key = e.target.value
@@ -30,7 +47,7 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
       setIsSaving(true)
       setMessage(null)
       try {
-        licenseService.setLicenseKey(key)
+        await backendLicenseService.setLicenseKey(key)
         setTimeout(() => {
           onValidationRefresh()
         }, 300)
@@ -46,11 +63,7 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
   }
 
   const handleOpenLoginPage = async () => {
-    try {
-      await invoke('open_url', { url: 'https://packages.akira-io.com/login' })
-    } catch (error) {
-      console.error('Failed to open login page:', error)
-    }
+    await invoke('open_url', { url: 'https://packages.akira-io.com/login' })
   }
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -211,7 +224,7 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
               </ol>
               <button
                 onClick={handleOpenLoginPage}
-                className="w-full mt-3 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors"
+                className="w-full mt-3 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
               >
                 Open packages.akira-io.com
               </button>

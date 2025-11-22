@@ -9,7 +9,7 @@ import { LogList } from './components/LogList'
 import { LicenseSplash } from './components/LicenseSplash'
 import { LicenseSettings } from './components/LicenseSettings'
 import { useLicenseValidation } from './hooks/useLicenseValidation'
-import { licenseService } from './services/licenseService'
+import { backendLicenseService } from './services/backendLicenseService'
 import type { LogEntry, RayColor, ExpandedItems } from './types'
 
 export default function App() {
@@ -28,14 +28,23 @@ export default function App() {
   const licenseValidation = useLicenseValidation()
   const [licenseValidationComplete, setLicenseValidationComplete] = useState(false)
   const [isValidatingLicense, setIsValidatingLicense] = useState(false)
-  const [isTrialActive, setIsTrialActive] = useState(licenseService.isTrialActive())
-  const [trialDaysRemaining, setTrialDaysRemaining] = useState(licenseService.getTrialDaysRemaining())
+  const [isTrialActive, setIsTrialActive] = useState(false)
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(0)
 
   // Initialize license validation on app mount
   useEffect(() => {
     licenseValidation.validate()
-    setIsTrialActive(licenseService.isTrialActive())
-    setTrialDaysRemaining(licenseService.getTrialDaysRemaining())
+    const loadTrialInfo = async () => {
+      try {
+        const active = await backendLicenseService.isTrialActive()
+        const daysRemaining = await backendLicenseService.getTrialDaysRemaining()
+        setIsTrialActive(active)
+        setTrialDaysRemaining(Number(daysRemaining))
+      } catch (error) {
+        console.error('Failed to load trial info:', error)
+      }
+    }
+    loadTrialInfo()
   }, [])
 
   // Show splash screen during validation, or if validation fails allow to continue
@@ -211,7 +220,7 @@ export default function App() {
             </p>
             <button
               onClick={() => setShowAbout(false)}
-              className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+              className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors cursor-pointer"
             >
               Close
             </button>

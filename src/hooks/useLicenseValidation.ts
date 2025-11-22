@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { CachedLicenseValidation } from '../types/license'
-import { licenseService } from '../services/licenseService'
+import { backendLicenseService } from '../services/backendLicenseService'
 
 export function useLicenseValidation() {
   const [validation, setValidation] = useState<CachedLicenseValidation | null>(null)
@@ -10,9 +10,9 @@ export function useLicenseValidation() {
   const validate = useCallback(async () => {
     setIsValidating(true)
     try {
-      const result = await licenseService.validate()
+      const result = await backendLicenseService.validate()
       setValidation(result)
-      setIsValid(licenseService.isValid(result))
+      setIsValid(result.valid && result.license !== null && result.license !== undefined)
     } catch (error) {
       console.error('License validation failed:', error)
       setValidation(null)
@@ -22,14 +22,24 @@ export function useLicenseValidation() {
     }
   }, [])
 
-  const setLicenseKey = useCallback((key: string, apiUrl?: string) => {
-    licenseService.setLicenseKey(key, apiUrl)
-  }, [])
+  const setLicenseKey = useCallback(async (key: string, apiUrl?: string) => {
+    try {
+      await backendLicenseService.setLicenseKey(key, apiUrl)
+      // Re-validate after setting the key
+      await validate()
+    } catch (error) {
+      console.error('Failed to set license key:', error)
+    }
+  }, [validate])
 
-  const clearCache = useCallback(() => {
-    licenseService.clearCache()
-    setValidation(null)
-    setIsValid(false)
+  const clearCache = useCallback(async () => {
+    try {
+      await backendLicenseService.clearCache()
+      setValidation(null)
+      setIsValid(false)
+    } catch (error) {
+      console.error('Failed to clear cache:', error)
+    }
   }, [])
 
   return {

@@ -92,49 +92,52 @@ export function LogEntry({
       {/* Clickable header to toggle expand */}
       <button
         onClick={onToggleExpand}
-        className="w-full text-left px-3 py-3 hover:bg-black/10 transition-colors flex gap-3 items-center group"
+        className="w-full text-left px-3 py-2 hover:bg-black/10 transition-colors group"
       >
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className={`w-2 h-2 rounded-full ${levelStyles.dot}`} />
-          <span className={`font-mono text-[11px] font-bold ${levelStyles.text}`}>
-            {log.type.toUpperCase()}
-          </span>
-        </div>
-        <span className="text-gray-500 text-[11px] flex-1">{log.timestamp}</span>
-        {log.type.toLowerCase() === 'executed_query' && (
-          <span className="text-gray-400 text-[11px] whitespace-nowrap flex-shrink-0">SQL</span>
-        )}
-        <span
-          onClick={handleOpenInEditor}
-          className="text-gray-600 text-[11px] cursor-pointer hover:text-purple-400 hover:underline transition-colors whitespace-nowrap flex-shrink-0"
-          title="Click to open in PhpStorm"
-        >
-          {log.location}
-        </span>
-        <button
-          onClick={handleCopyLog}
-          className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-          title="Copy log content"
-        >
-          {copied ? (
-            <Check size={13} className="text-green-400" />
-          ) : (
-            <Copy size={13} className="text-gray-400 hover:text-gray-300" />
-          )}
-        </button>
-        {shouldShowExpandButton && (
-          <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0 text-sm">
-            {isExpanded ? '▼' : '▶'}
-          </span>
-        )}
-        {log.pending_label && (() => {
-          const labelColors = getLabelColorStyles(log.color)
-          return (
-            <span className={`px-2 py-0.5 rounded-full font-medium text-[10px] border whitespace-nowrap flex-shrink-0 ${labelColors.border} ${labelColors.text} ${labelColors.bg}`}>
-              {log.pending_label}
+        <div className="flex gap-2 items-start">
+          <div className="flex-1 flex flex-col gap-0.5">
+            <div className="flex items-center gap-2">
+              <span className={`font-mono text-[10px] font-bold ${levelStyles.text}`}>
+                {log.type.toUpperCase()}
+              </span>
+              <span className="text-gray-600 text-[10px]">{log.timestamp}</span>
+              {log.type.toLowerCase() === 'executed_query' && (
+                <span className="text-gray-500 text-[10px] whitespace-nowrap">SQL</span>
+              )}
+            </div>
+            <span
+              onClick={handleOpenInEditor}
+              className="text-gray-600 text-[10px] cursor-pointer hover:text-purple-400 hover:underline transition-colors"
+              title="Click to open in PhpStorm"
+            >
+              {log.location}
             </span>
-          )
-        })()}
+          </div>
+          <button
+            onClick={handleCopyLog}
+            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-0.5"
+            title="Copy log content"
+          >
+            {copied ? (
+              <Check size={13} className="text-green-400" />
+            ) : (
+              <Copy size={13} className="text-gray-400 hover:text-gray-300" />
+            )}
+          </button>
+          {shouldShowExpandButton && (
+            <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0 text-xs">
+              {isExpanded ? '▲' : '▶'}
+            </span>
+          )}
+          {log.pending_label && (() => {
+            const labelColors = getLabelColorStyles(log.color)
+            return (
+              <span className={`px-2 py-0.5 rounded-full font-medium text-[10px] border whitespace-nowrap flex-shrink-0 ${labelColors.border} ${labelColors.text} ${labelColors.bg}`}>
+                {log.pending_label}
+              </span>
+            )
+          })()}
+        </div>
       </button>
       {isExpanded && (
         <div className="px-3 pb-4 border-t border-white/5 pt-3">
