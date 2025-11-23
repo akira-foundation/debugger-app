@@ -62,44 +62,28 @@ export function EloquentModelDisplay({
   }
 
   return (
-    <div className="space-y-2">
-      {/* Class Name Section */}
+    <div className="rounded-lg overflow-hidden border border-white/10">
+      {/* Header with Class Name */}
       {className && (
-        <div className="rounded-lg overflow-hidden border border-white/10">
-          <div className="px-4 py-2">
-            <div className="text-sm text-dracula-foreground font-mono">
-              <SyntaxHighlighter text={className} />
-            </div>
+        <div className="px-4 py-2 border-b border-white/5">
+          <div className="text-xs text-dracula-foreground font-mono">
+            <SyntaxHighlighter text={className} />
           </div>
         </div>
       )}
 
       {/* Attributes Section */}
       {attributeLines.length > 0 && (
-        <div className="rounded-lg overflow-hidden border border-white/10">
-          <button
-            onClick={() => setIsAttributesExpanded(!isAttributesExpanded)}
-            className="w-full px-4 py-2 border-b border-white/5 flex items-center justify-between"
-          >
-            <span className="text-xs font-medium text-gray-400">Attributes</span>
-            <span className="text-gray-500">
-              {isAttributesExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-            </span>
-          </button>
-          {isAttributesExpanded && (
-            <div className="px-4 py-3">
-              <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
-                {attributeLines.map((line, idx) => (
-                  <div key={idx}>
-                    <SyntaxHighlighter text={line} />
-                  </div>
-                ))}
+        <div className="px-4 py-3">
+          <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+            {attributeLines.map((line, idx) => (
+              <div key={idx}>
+                <SyntaxHighlighter text={line} />
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       )}
-
     </div>
   )
 }

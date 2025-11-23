@@ -61,41 +61,32 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
   }
 
   return (
-    <div className="space-y-2">
-      {/* Connection Info */}
-      <div className="rounded-lg overflow-hidden border border-white/10">
-        <div className="px-4 py-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400">
-              Connection: <span className="text-gray-200 font-mono">{connectionName}</span>
-            </span>
-            <span className="text-xs text-gray-400">
-              Time: <span className="text-cyan-400 font-mono">{time.toFixed(2)}ms</span>
-            </span>
+    <div className="rounded-lg overflow-hidden border border-white/10">
+      {/* Header with Connection and Time Info */}
+      <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between">
+        <div className="text-xs space-y-1">
+          <div className="flex gap-4">
+            <span className="text-gray-400">Connection: <span className="text-gray-200 font-mono">{connectionName}</span></span>
+            <span className="text-gray-400">Time: <span className="text-cyan-400 font-mono">{time.toFixed(2)}ms</span></span>
           </div>
         </div>
+        <button
+          onClick={handleCopy}
+          className="p-1 rounded hover:bg-white/5 transition-colors flex-shrink-0"
+          title="Copy SQL to clipboard"
+        >
+          {copied ? (
+            <Check size={14} className="text-green-400" />
+          ) : (
+            <Copy size={14} className="text-gray-400" />
+          )}
+        </button>
       </div>
 
-      {/* SQL Query */}
-      <div className="rounded-lg overflow-hidden border border-white/10">
-        <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors">
-          <span className="text-xs font-medium text-gray-400">Query</span>
-          <button
-            onClick={handleCopy}
-            className="p-1 rounded hover:bg-white/5 transition-colors"
-            title="Copy SQL to clipboard"
-          >
-            {copied ? (
-              <Check size={14} className="text-green-400" />
-            ) : (
-              <Copy size={14} className="text-gray-400" />
-            )}
-          </button>
-        </div>
-        <div className="px-4 py-3">
-          <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
-            <SyntaxHighlighter text={formattedSql} />
-          </div>
+      {/* SQL Content */}
+      <div className="px-4 py-3">
+        <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+          <SyntaxHighlighter text={formattedSql} />
         </div>
       </div>
     </div>

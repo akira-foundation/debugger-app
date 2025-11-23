@@ -8,6 +8,7 @@ import { CollapsibleArray } from './CollapsibleArray'
 import { EloquentModelDisplay } from './EloquentModelDisplay'
 import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
 import { MailableDisplay } from './MailableDisplay'
+import { SimpleLogDisplay } from './SimpleLogDisplay'
 import { getPreferredEditor } from '../services/editorService'
 import { getLogBorderConfig } from '../services/logBorderConfigService'
 
@@ -201,16 +202,7 @@ export function LogEntry({
               onToggleItem={onToggleItem}
             />
           ) : (
-            <div className="space-y-2">
-              {log.content.map((line, idx) => (
-                <div
-                  key={idx}
-                  className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words"
-                >
-                  <SyntaxHighlighter text={line} />
-                </div>
-              ))}
-            </div>
+            <SimpleLogDisplay content={log.content} />
           )}
         </div>
       )}
