@@ -204,7 +204,7 @@ export default function App() {
   }
 
   const shouldShowExpandButton = (content: string[]) => {
-    return content.length > 1 || (content.length > 0 && content[0].length > 200)
+    return content.length > 0
   }
 
   const getLogTypeColor = (type: string) => {

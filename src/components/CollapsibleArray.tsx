@@ -1,3 +1,4 @@
+import { ChevronRight, ChevronDown } from 'lucide-react'
 import { ExpandedItems } from '../types'
 import { parseArrayItems } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
@@ -41,8 +42,8 @@ export function CollapsibleArray({
               className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-white/5 transition-colors group"
             >
               {hasDetails && (
-                <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0 font-bold text-sm">
-                  {isExpanded ? '▼' : '▶'}
+                <span className="text-purple-400 group-hover:text-purple-300 flex-shrink-0">
+                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                 </span>
               )}
               <span className="flex-1 overflow-x-auto text-gray-300">

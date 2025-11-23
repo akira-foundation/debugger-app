@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, ChevronRight, ChevronDown } from 'lucide-react'
 import { LogEntry as LogEntryType, ExpandedItems, logTypes, rayColors } from '../types'
 import { isArrayContent, isEloquentModel } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
@@ -164,8 +164,8 @@ export function LogEntry({
             )}
           </button>
           {shouldShowExpandButton && (
-            <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0 text-xs">
-              {isExpanded ? '▲' : '▶'}
+            <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0">
+              {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
             </span>
           )}
           {log.pending_label && (() => {

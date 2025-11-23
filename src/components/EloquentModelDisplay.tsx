@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ChevronRight, ChevronDown } from 'lucide-react'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { ExpandedItems } from '../types'
 
@@ -81,8 +82,8 @@ export function EloquentModelDisplay({
             className="w-full px-4 py-2 border-b border-white/5 flex items-center justify-between"
           >
             <span className="text-xs font-medium text-gray-400">Attributes</span>
-            <span className="text-gray-500 text-sm">
-              {isAttributesExpanded ? '▼' : '▶'}
+            <span className="text-gray-500">
+              {isAttributesExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
             </span>
           </button>
           {isAttributesExpanded && (
