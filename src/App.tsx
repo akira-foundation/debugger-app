@@ -8,7 +8,7 @@ import { Footer } from './components/Footer'
 import { SearchBar } from './components/SearchBar'
 import { LogList } from './components/LogList'
 import { LicenseSplash } from './components/LicenseSplash'
-import { LicenseSettings } from './components/LicenseSettings'
+import { SettingsPage } from './components/SettingsPage'
 import { useLicenseValidation } from './hooks/useLicenseValidation'
 import { backendLicenseService } from './services/backendLicenseService'
 import { APP_VERSION } from './version'
@@ -206,7 +206,7 @@ export default function App() {
   // Show license settings page if user requested it
   if (showLicenseSettings) {
     return (
-      <LicenseSettings
+      <SettingsPage
         onBack={() => setShowLicenseSettings(false)}
         validation={licenseValidation.validation}
         onValidationRefresh={handleLicenseRefresh}
