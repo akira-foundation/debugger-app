@@ -82,19 +82,13 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
           <span className="text-xs font-medium text-gray-400">Query</span>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
+            className="p-1 rounded hover:bg-white/5 transition-colors"
             title="Copy SQL to clipboard"
           >
             {copied ? (
-              <>
-                <Check size={12} className="text-green-400" />
-                <span className="text-xs text-green-400">Copied</span>
-              </>
+              <Check size={14} className="text-green-400" />
             ) : (
-              <>
-                <Copy size={12} className="text-gray-400" />
-                <span className="text-xs text-gray-400">Copy</span>
-              </>
+              <Copy size={14} className="text-gray-400" />
             )}
           </button>
         </div>

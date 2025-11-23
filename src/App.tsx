@@ -174,6 +174,19 @@ export default function App() {
     setExpandedLogs(newExpanded)
   }
 
+  const toggleAllLogs = () => {
+    if (expandedLogs.size === logs.length && logs.length > 0) {
+      // All are expanded, collapse them
+      setExpandedLogs(new Set())
+    } else {
+      // Expand all
+      const allLogIds = new Set(logs.map(log => log.id))
+      setExpandedLogs(allLogIds)
+    }
+  }
+
+  const areAllLogsExpanded = logs.length > 0 && expandedLogs.size === logs.length
+
   const toggleItemExpanded = (logId: string, itemIndex: string) => {
     const newItems = { ...expandedItems }
     if (!newItems[logId]) {
@@ -254,6 +267,8 @@ export default function App() {
         selectedLogTypes={selectedLogTypes}
         onToggleLogType={toggleLogType}
         onToggleSettings={() => setShowLicenseSettings(true)}
+        onToggleAllLogs={toggleAllLogs}
+        areAllLogsExpanded={areAllLogsExpanded}
         isTrialActive={isTrialActive}
         trialDaysRemaining={trialDaysRemaining}
       />

@@ -1,4 +1,4 @@
-import { Search, Pin, Trash2, Settings, Monitor } from 'lucide-react'
+import { Search, Pin, Trash2, Settings, Monitor, Maximize2, Minimize2 } from 'lucide-react'
 import { rayColors, logTypes } from '../types'
 import type { RayColor, LogType } from '../types'
 
@@ -14,11 +14,13 @@ interface HeaderProps {
   selectedLogTypes: Set<LogType>
   onToggleLogType: (logType: LogType) => void
   onToggleSettings: () => void
+  onToggleAllLogs: () => void
+  areAllLogsExpanded: boolean
   isTrialActive: boolean
   trialDaysRemaining: number
 }
 
-export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOpen, onToggleSearch, selectedColor, onSelectColor, selectedLogTypes, onToggleLogType, onToggleSettings, isTrialActive, trialDaysRemaining }: HeaderProps) {
+export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOpen, onToggleSearch, selectedColor, onSelectColor, selectedLogTypes, onToggleLogType, onToggleSettings, onToggleAllLogs, areAllLogsExpanded, isTrialActive, trialDaysRemaining }: HeaderProps) {
   return (
     <header className="flex flex-col bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
       {/* First row: Status, Colors, and Action buttons */}
@@ -109,8 +111,9 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
       </div>
 
       {/* Second row: Log Type Filter */}
-      <div className="flex gap-1 items-center px-6 py-1.5 border-t border-white/5 overflow-x-auto">
-        <span className="text-[10px] text-gray-500 font-medium flex-shrink-0">Type:</span>
+      <div className="flex gap-1 items-center px-6 py-1.5 border-t border-white/5 overflow-x-auto justify-between">
+        <div className="flex gap-1 items-center overflow-x-auto">
+          <span className="text-[10px] text-gray-500 font-medium flex-shrink-0">Type:</span>
         {(['log', 'eloquent_model', 'executed_query', 'mailable', 'application_log'] as const).map((type) => {
           const config = logTypes[type]
           return (
@@ -128,6 +131,14 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
             </button>
           )
         })}
+        </div>
+        <button
+          onClick={onToggleAllLogs}
+          title={areAllLogsExpanded ? 'Collapse all logs' : 'Expand all logs'}
+          className="p-1 rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-200 transition-all cursor-pointer flex-shrink-0"
+        >
+          {areAllLogsExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+        </button>
       </div>
     </header>
   )
