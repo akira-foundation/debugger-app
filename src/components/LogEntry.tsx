@@ -128,10 +128,10 @@ export function LogEntry({
       key={log.id}
       className={`glass card mb-2 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-sm hover:shadow-purple-500/20 backdrop-blur-lg border ${levelStyles.border}`}
     >
-      {/* Clickable header to toggle expand */}
-      <button
+      {/* Header */}
+      <div
         onClick={onToggleExpand}
-        className="w-full text-left px-3 py-2 transition-colors group"
+        className="w-full text-left px-3 py-2 group cursor-pointer"
       >
         <div className="flex gap-2 items-start">
           <div className="flex-1 flex flex-col gap-0.5">
@@ -146,16 +146,15 @@ export function LogEntry({
             </div>
             <button
               onClick={handleOpenInEditor}
-              className="text-left text-gray-600 text-[10px] cursor-pointer hover:text-purple-400 hover:underline transition-colors p-0 bg-none border-none"
-              title="Click to open in PhpStorm"
+              className="text-left text-gray-600 text-[10px] cursor-pointer hover:text-purple-400 hover:underline transition-colors p-0 bg-none border-none w-fit"
             >
               {log.location}
             </button>
           </div>
           <button
-            onClick={handleCopyLog}
+            onClick={onToggleExpand}
             className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-0.5"
-            title="Copy log content"
+            title="Expand/collapse"
           >
             {copied ? (
               <Check size={13} className="text-green-400" />
@@ -164,9 +163,12 @@ export function LogEntry({
             )}
           </button>
           {shouldShowExpandButton && (
-            <span className="text-gray-500 group-hover:text-gray-300 flex-shrink-0">
+            <button
+              onClick={onToggleExpand}
+              className="text-gray-500 group-hover:text-gray-300 flex-shrink-0 p-0 bg-none border-none cursor-pointer"
+            >
               {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-            </span>
+            </button>
           )}
           {log.pending_label && (() => {
             const labelColors = getLabelColorStyles(log.color)
@@ -177,9 +179,9 @@ export function LogEntry({
             )
           })()}
         </div>
-      </button>
+      </div>
       {isExpanded && (
-        <div className="px-1 pb-4 border-t border-white/5 pt-1">
+        <div className="px-1 pb-1 border-white/5 pt-1">
           {log.type.toLowerCase() === 'eloquent_model' ? (
             <EloquentModelDisplay
               content={log.content}
