@@ -7,6 +7,7 @@ import { TrialSection } from './settings/TrialSection'
 import { LicenseStatusSection } from './settings/LicenseStatusSection'
 import { LicenseKeySection } from './settings/LicenseKeySection'
 import { EditorSection } from './settings/EditorSection'
+import { LogBorderSection } from './settings/LogBorderSection'
 
 interface SettingsPageProps {
   onBack: () => void
@@ -92,7 +93,7 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] text-white font-sans">
       {/* Header */}
-      <header className="flex items-center gap-4 px-8 py-4 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
+      <header className="flex items-center gap-4 px-4 py-4 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
         <button
           onClick={onBack}
           className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-gray-200"
@@ -104,7 +105,7 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
       </header>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto px-8 py-8">
+      <div className="flex-1 overflow-auto px-4 py-8">
         <div className="max-w-3xl space-y-8">
           <TrialSection
             isTrialActive={isTrialActive}
@@ -127,6 +128,8 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
             message={editorMessage}
             onEditorChange={handleEditorChange}
           />
+
+          <LogBorderSection />
         </div>
       </div>
     </div>

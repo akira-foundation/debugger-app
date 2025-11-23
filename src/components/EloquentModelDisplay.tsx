@@ -64,7 +64,7 @@ export function EloquentModelDisplay({
     <div className="space-y-2">
       {/* Class Name Section */}
       {className && (
-        <div className="glass bg-white/5 rounded-lg overflow-hidden border border-white/10">
+        <div className="rounded-lg overflow-hidden border border-white/10">
           <div className="px-4 py-2">
             <div className="text-sm text-dracula-foreground font-mono">
               <SyntaxHighlighter text={className} />
@@ -78,7 +78,7 @@ export function EloquentModelDisplay({
         <div className="rounded-lg overflow-hidden border border-white/10">
           <button
             onClick={() => setIsAttributesExpanded(!isAttributesExpanded)}
-            className="w-full px-4 py-2 border-b border-white/5 hover:bg-white/5 transition-colors flex items-center justify-between"
+            className="w-full px-4 py-2 border-b border-white/5 flex items-center justify-between"
           >
             <span className="text-xs font-medium text-gray-400">Attributes</span>
             <span className="text-gray-500 text-sm">
@@ -87,7 +87,7 @@ export function EloquentModelDisplay({
           </button>
           {isAttributesExpanded && (
             <div className="px-4 py-3">
-              <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words">
+              <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
                 {attributeLines.map((line, idx) => (
                   <div key={idx}>
                     <SyntaxHighlighter text={line} />

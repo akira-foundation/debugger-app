@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { Copy, Check } from 'lucide-react'
-import { LogEntry as LogEntryType, ExpandedItems } from '../types'
+import { LogEntry as LogEntryType, ExpandedItems, logTypes, rayColors } from '../types'
 import { isArrayContent, isEloquentModel } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { CollapsibleArray } from './CollapsibleArray'
@@ -9,6 +9,7 @@ import { EloquentModelDisplay } from './EloquentModelDisplay'
 import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
 import { MailableDisplay } from './MailableDisplay'
 import { getPreferredEditor } from '../services/editorService'
+import { getLogBorderConfig } from '../services/logBorderConfigService'
 
 interface LogEntryProps {
   log: LogEntryType
@@ -20,15 +21,38 @@ interface LogEntryProps {
   getLogTypeColor: (type: string) => string
 }
 
+const colorStyleMap: Record<string, { border: string; dot: string; text: string }> = {
+  purple: { border: 'border-purple-500/30', dot: 'bg-purple-500', text: 'text-purple-400' },
+  red: { border: 'border-red-500/30', dot: 'bg-red-500', text: 'text-red-400' },
+  orange: { border: 'border-orange-500/30', dot: 'bg-orange-500', text: 'text-orange-400' },
+  yellow: { border: 'border-yellow-500/30', dot: 'bg-yellow-500', text: 'text-yellow-400' },
+  green: { border: 'border-green-500/30', dot: 'bg-green-500', text: 'text-green-400' },
+  blue: { border: 'border-blue-500/30', dot: 'bg-blue-500', text: 'text-blue-400' },
+  cyan: { border: 'border-cyan-500/30', dot: 'bg-cyan-500', text: 'text-cyan-400' },
+  pink: { border: 'border-pink-500/30', dot: 'bg-pink-500', text: 'text-pink-400' },
+}
+
 function getLevelStyles(type: string): { border: string; dot: string; text: string } {
-  const styleMap: Record<string, { border: string; dot: string; text: string }> = {
-    info: { border: 'border-emerald-500/30', dot: 'bg-emerald-500', text: 'text-emerald-400' },
-    debug: { border: 'border-cyan-500/30', dot: 'bg-cyan-500', text: 'text-cyan-400' },
-    error: { border: 'border-red-500/30', dot: 'bg-red-500', text: 'text-red-400' },
-    warning: { border: 'border-purple-500/30', dot: 'bg-purple-500', text: 'text-purple-400' },
+  const config = getLogBorderConfig()
+  const logType = logTypes[type.toLowerCase() as keyof typeof logTypes]
+
+  if (config.mode === 'unified' && config.unifiedColor && config.unifiedColor in colorStyleMap) {
+    return colorStyleMap[config.unifiedColor]
   }
 
-  return styleMap[type.toLowerCase()] || styleMap['info']
+  if (logType) {
+    return {
+      border: logType.border,
+      dot: logType.dot,
+      text: logType.color,
+    }
+  }
+
+  return {
+    border: 'border-emerald-500/30',
+    dot: 'bg-emerald-500',
+    text: 'text-emerald-400',
+  }
 }
 
 function getLabelColorStyles(logColor: string | undefined) {
@@ -102,7 +126,7 @@ export function LogEntry({
   return (
     <div
       key={log.id}
-      className={`glass card mb-2 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-md hover:shadow-purple-500/20 backdrop-blur-lg border ${levelStyles.border}`}
+      className={`glass card mb-2 font-mono text-[13px] leading-relaxed overflow-hidden group hover:shadow-sm hover:shadow-purple-500/20 backdrop-blur-lg border ${levelStyles.border}`}
     >
       {/* Clickable header to toggle expand */}
       <button
@@ -155,7 +179,7 @@ export function LogEntry({
         </div>
       </button>
       {isExpanded && (
-        <div className="px-3 pb-4 border-t border-white/5 pt-3">
+        <div className="px-1 pb-4 border-t border-white/5 pt-1">
           {log.type.toLowerCase() === 'eloquent_model' ? (
             <EloquentModelDisplay
               content={log.content}
