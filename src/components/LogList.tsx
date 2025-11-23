@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react'
-import { LogEntry as LogEntryType, RayColor, ExpandedItems } from '../types'
+import { LogEntry as LogEntryType, RayColor, LogType, ExpandedItems } from '../types'
 import { LogEntry } from './LogEntry'
 
 interface LogListProps {
   logs: LogEntryType[]
   selectedColor: RayColor | null
+  selectedLogTypes: Set<LogType>
   expandedLogs: Set<string>
   expandedItems: ExpandedItems
   onToggleExpand: (logId: string) => void
@@ -17,6 +18,7 @@ interface LogListProps {
 export function LogList({
   logs,
   selectedColor,
+  selectedLogTypes,
   expandedLogs,
   expandedItems,
   onToggleExpand,
@@ -49,6 +51,10 @@ export function LogList({
               .filter((log) => {
                 // Always hide 'color' type logs from display
                 if (log.type === 'color') return false
+                // Filter by log type if any types are selected
+                if (selectedLogTypes.size > 0 && !selectedLogTypes.has(log.type.toLowerCase() as LogType)) {
+                  return false
+                }
                 // Filter by color
                 if (selectedColor && (log.color || 'default') !== selectedColor) return false
                 // Filter by search query

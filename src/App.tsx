@@ -12,7 +12,7 @@ import { LicenseSettings } from './components/LicenseSettings'
 import { useLicenseValidation } from './hooks/useLicenseValidation'
 import { backendLicenseService } from './services/backendLicenseService'
 import { APP_VERSION } from './version'
-import type { LogEntry, RayColor, ExpandedItems } from './types'
+import type { LogEntry, RayColor, LogType, ExpandedItems } from './types'
 
 export default function App() {
   const [logs, setLogs] = useState<LogEntry[]>([])
@@ -20,6 +20,7 @@ export default function App() {
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set())
   const [expandedItems, setExpandedItems] = useState<ExpandedItems>({})
   const [selectedColor, setSelectedColor] = useState<RayColor | null>(null)
+  const [selectedLogTypes, setSelectedLogTypes] = useState<Set<LogType>>(new Set())
   const [isPinned, setIsPinned] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -117,6 +118,16 @@ export default function App() {
   }, [])
 
   const clearLogs = () => setLogs([])
+
+  const toggleLogType = (logType: LogType) => {
+    const newTypes = new Set(selectedLogTypes)
+    if (newTypes.has(logType)) {
+      newTypes.delete(logType)
+    } else {
+      newTypes.add(logType)
+    }
+    setSelectedLogTypes(newTypes)
+  }
 
   // Handle window pin/unpin
   useEffect(() => {
@@ -240,6 +251,8 @@ export default function App() {
         onToggleSearch={() => setIsSearchOpen(!isSearchOpen)}
         selectedColor={selectedColor}
         onSelectColor={setSelectedColor}
+        selectedLogTypes={selectedLogTypes}
+        onToggleLogType={toggleLogType}
         onToggleSettings={() => setShowLicenseSettings(true)}
         isTrialActive={isTrialActive}
         trialDaysRemaining={trialDaysRemaining}
@@ -248,6 +261,7 @@ export default function App() {
       <LogList
         logs={logs}
         selectedColor={selectedColor}
+        selectedLogTypes={selectedLogTypes}
         expandedLogs={expandedLogs}
         expandedItems={expandedItems}
         onToggleExpand={toggleExpanded}

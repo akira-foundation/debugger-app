@@ -235,8 +235,9 @@ This document tracks all planned features and enhancements for the Akira Debugge
 
 | Feature | Status | Started | Completed | Notes |
 |---------|--------|---------|-----------|-------|
+| Remove Unused ColorFilter | ✅ Completed | - | 2025-11-23 | Cleaned up unused component |
+| Log Type Filtering | ✅ Completed | - | 2025-11-23 | Added Log, Model, Query, Mail type filters in header |
 | AI Log Explanation | ⏳ Pending | - | - | NEW - Priority feature |
-| Log Type Filtering | ⏳ Pending | - | - | - |
 | Persistent Log Storage | ⏳ Pending | - | - | - |
 | Error Stack Trace Viewer | ⏳ Pending | - | - | - |
 | Query Performance Analysis | ⏳ Pending | - | - | - |

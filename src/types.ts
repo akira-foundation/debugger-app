@@ -1,5 +1,7 @@
 export type RayColor = 'default' | 'purple' | 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'cyan' | 'pink'
 
+export type LogType = 'log' | 'eloquent_model' | 'executed_query' | 'mailable' | 'info' | 'debug' | 'warning' | 'error'
+
 export interface LogEntry {
   id: string
   timestamp: string
@@ -25,4 +27,15 @@ export const rayColors: Record<RayColor, { bg: string; text: string; hex: string
   blue: { bg: 'bg-blue-500', text: 'text-blue-200', hex: '#8BE9FD' },
   cyan: { bg: 'bg-cyan-500', text: 'text-cyan-200', hex: '#8BE9FD' },
   pink: { bg: 'bg-pink-500', text: 'text-pink-200', hex: '#FF79C6' },
+}
+
+export const logTypes: Record<LogType, { label: string; color: string }> = {
+  log: { label: 'Log', color: 'text-gray-400' },
+  eloquent_model: { label: 'Model', color: 'text-purple-400' },
+  executed_query: { label: 'Query', color: 'text-blue-400' },
+  mailable: { label: 'Mail', color: 'text-pink-400' },
+  info: { label: 'Info', color: 'text-emerald-400' },
+  debug: { label: 'Debug', color: 'text-cyan-400' },
+  warning: { label: 'Warning', color: 'text-yellow-400' },
+  error: { label: 'Error', color: 'text-red-400' },
 }
