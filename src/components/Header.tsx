@@ -111,7 +111,7 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
       {/* Second row: Log Type Filter */}
       <div className="flex gap-1 items-center px-6 py-1.5 border-t border-white/5 overflow-x-auto">
         <span className="text-[10px] text-gray-500 font-medium flex-shrink-0">Type:</span>
-        {(['log', 'eloquent_model', 'executed_query', 'mailable'] as const).map((type) => {
+        {(['log', 'eloquent_model', 'executed_query', 'mailable', 'application_log'] as const).map((type) => {
           const config = logTypes[type]
           return (
             <button
