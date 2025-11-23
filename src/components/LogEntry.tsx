@@ -107,7 +107,7 @@ export function LogEntry({
       {/* Clickable header to toggle expand */}
       <button
         onClick={onToggleExpand}
-        className="w-full text-left px-3 py-2 hover:bg-black/10 transition-colors group"
+        className="w-full text-left px-3 py-2 transition-colors group"
       >
         <div className="flex gap-2 items-start">
           <div className="flex-1 flex flex-col gap-0.5">
@@ -120,13 +120,13 @@ export function LogEntry({
                 <span className="text-gray-500 text-[10px] whitespace-nowrap">SQL</span>
               )}
             </div>
-            <span
+            <button
               onClick={handleOpenInEditor}
-              className="text-gray-600 text-[10px] cursor-pointer hover:text-purple-400 hover:underline transition-colors"
+              className="text-left text-gray-600 text-[10px] cursor-pointer hover:text-purple-400 hover:underline transition-colors p-0 bg-none border-none"
               title="Click to open in PhpStorm"
             >
               {log.location}
-            </span>
+            </button>
           </div>
           <button
             onClick={handleCopyLog}
