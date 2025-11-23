@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { invoke } from '@tauri-apps/api/core'
 import { CachedLicenseValidation, LicenseStatus } from '../types/license'
 import { backendLicenseService } from '../services/backendLicenseService'
+import { getAvailableEditors, getInstalledEditors, getPreferredEditor, savePreferredEditor, EditorInfo } from '../services/editorService'
 
 interface LicenseSettingsProps {
   onBack: () => void
@@ -18,6 +19,8 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
   const [isTrialActive, setIsTrialActive] = useState(false)
   const [trialDaysRemaining, setTrialDaysRemaining] = useState(0)
   const [trialStartDate, setTrialStartDate] = useState<Date | null>(null)
+  const [installedEditors, setInstalledEditors] = useState<EditorInfo[]>([])
+  const [preferredEditorId, setPreferredEditorId] = useState<string>('phpstorm')
 
   useEffect(() => {
     const loadTrialInfo = async () => {
@@ -37,7 +40,33 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
     }
 
     loadTrialInfo()
+
+    const loadEditors = async () => {
+      try {
+        const installed = await getInstalledEditors()
+        const preferred = getPreferredEditor()
+        setInstalledEditors(installed)
+        setPreferredEditorId(preferred || 'phpstorm')
+      } catch (err) {
+        console.error('Failed to load editors:', err)
+      }
+    }
+    loadEditors()
   }, [])
+
+  const handleEditorChange = (editorId: string) => {
+    try {
+      savePreferredEditor(editorId)
+      setPreferredEditorId(editorId)
+      setMessage({ type: 'success', text: `Editor changed to ${installedEditors.find(e => e.id === editorId)?.name || editorId}` })
+      setTimeout(() => setMessage(null), 3000)
+    } catch (err) {
+      setMessage({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Failed to change editor',
+      })
+    }
+  }
 
   const handleLicenseKeyChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const key = e.target.value
@@ -259,6 +288,52 @@ export function LicenseSettings({ onBack, validation, onValidationRefresh }: Lic
                 Validating license...
               </div>
             )}
+          </div>
+
+          {/* Editor Settings */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-white">Editor Settings</h2>
+
+            <div className="border rounded-lg p-6 bg-white/5 border-white/10 space-y-4">
+              {installedEditors.length > 0 ? (
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase">Preferred Editor</label>
+                  <select
+                    value={preferredEditorId}
+                    onChange={(e) => handleEditorChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#0f0f0f] border border-white/10 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 font-mono text-sm cursor-pointer h-9"
+                  >
+                    {installedEditors.map((editor) => (
+                      <option key={editor.id} value={editor.id}>
+                        {editor.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+
+              {installedEditors.length > 0 && (
+                <div className="pt-2 border-t border-white/10">
+                  <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Detected Editors</p>
+                  <div className="flex flex-wrap gap-2">
+                    {installedEditors.map((editor) => (
+                      <span
+                        key={editor.id}
+                        className="px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-medium"
+                      >
+                        {editor.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {installedEditors.length === 0 && (
+                <div className="pt-2 border-t border-white/10">
+                  <p className="text-xs text-gray-500">No editors detected. Install VSCode, PhpStorm, or Cursor to use this feature.</p>
+                </div>
+              )}
+            </div>
           </div>
 
         </div>

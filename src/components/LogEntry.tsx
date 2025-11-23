@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { Copy, Check } from 'lucide-react'
 import { LogEntry as LogEntryType, ExpandedItems } from '../types'
@@ -8,6 +8,7 @@ import { CollapsibleArray } from './CollapsibleArray'
 import { EloquentModelDisplay } from './EloquentModelDisplay'
 import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
 import { MailableDisplay } from './MailableDisplay'
+import { getPreferredEditor } from '../services/editorService'
 
 interface LogEntryProps {
   log: LogEntryType
@@ -57,7 +58,14 @@ export function LogEntry({
   getLogTypeColor,
 }: LogEntryProps) {
   const [copied, setCopied] = useState(false)
+  const [preferredEditor, setPreferredEditor] = useState<string | null>(null)
   const levelStyles = getLevelStyles(log.type)
+
+  // Load preferred editor on mount
+  useEffect(() => {
+    const editor = getPreferredEditor()
+    setPreferredEditor(editor || 'phpstorm')
+  }, [])
 
   const handleOpenInEditor = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -66,7 +74,14 @@ export function LogEntry({
       const filePath = log.file_path || log.location.split(':')[0]
       const line = log.location.split(':')[1]
       const lineNum = parseInt(line, 10) || 0
-      await invoke('open_in_editor', { filePath, line: lineNum })
+      const editor = preferredEditor || 'phpstorm'
+      console.log('Opening file in editor:', { filePath, lineNum, editor })
+      await invoke('open_in_editor_v2', {
+        filePath: filePath,
+        line: lineNum,
+        editorId: editor,
+      })
+      console.log('File opened successfully')
     } catch (err) {
       console.error('Failed to open file in editor:', err)
     }
