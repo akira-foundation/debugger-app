@@ -2,22 +2,22 @@ import { useState } from 'react'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { ExpandedItems } from '../types'
+import { useLogStyle } from '../context/LogStyleContext'
 
 interface EloquentModelDisplayProps {
   content: string[]
   logId?: string
   expandedItems?: ExpandedItems
   onToggleItem?: (logId: string, itemIndex: string) => void
-  borderClass?: string
 }
 
 export function EloquentModelDisplay({
   content,
   logId = '',
   expandedItems = {},
-  onToggleItem = () => {},
-  borderClass = 'border-white/10'
+  onToggleItem = () => {}
 }: EloquentModelDisplayProps) {
+  const { borderClass } = useLogStyle()
   const [isAttributesExpanded, setIsAttributesExpanded] = useState(true)
 
   let className = ''

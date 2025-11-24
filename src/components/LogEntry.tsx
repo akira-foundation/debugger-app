@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
+import {useEffect, useState} from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { Copy, Check, ChevronRight, ChevronDown } from 'lucide-react'
-import { LogEntry as LogEntryType, ExpandedItems, logTypes, rayColors } from '../types'
-import { isArrayContent, isEloquentModel } from '../utils/array'
-import { SyntaxHighlighter } from '../utils/syntax'
+import { ChevronRight, ChevronDown } from 'lucide-react'
+import { LogEntry as LogEntryType, ExpandedItems, logTypes } from '../types'
+import { isArrayContent } from '../utils/array'
 import { CollapsibleArray } from './CollapsibleArray'
 import { EloquentModelDisplay } from './EloquentModelDisplay'
 import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
@@ -11,6 +10,7 @@ import { MailableDisplay } from './MailableDisplay'
 import { SimpleLogDisplay } from './SimpleLogDisplay'
 import { getPreferredEditor } from '../services/editorService'
 import { getLogBorderConfig } from '../services/logBorderConfigService'
+import { LogStyleProvider } from '../context/LogStyleContext'
 
 interface LogEntryProps {
   log: LogEntryType
@@ -80,9 +80,7 @@ export function LogEntry({
   expandedItems,
   onToggleItem,
   shouldShowExpandButton,
-  getLogTypeColor,
-}: LogEntryProps) {
-  const [copied, setCopied] = useState(false)
+                         }: LogEntryProps) {
   const [preferredEditor, setPreferredEditor] = useState<string | null>(null)
   const levelStyles = getLevelStyles(log.type)
 
@@ -112,17 +110,6 @@ export function LogEntry({
     }
   }
 
-  const handleCopyLog = async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const logContent = log.content.join('\n')
-    try {
-      await navigator.clipboard.writeText(logContent)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy log:', err)
-    }
-  }
 
   return (
     <div
@@ -152,17 +139,6 @@ export function LogEntry({
               {log.location}
             </button>
           </div>
-          <button
-            onClick={onToggleExpand}
-            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 pt-0.5"
-            title="Expand/collapse"
-          >
-            {copied ? (
-              <Check size={13} className="text-green-400" />
-            ) : (
-              <Copy size={13} className="text-gray-400 hover:text-gray-300" />
-            )}
-          </button>
           {shouldShowExpandButton && (
             <button
               onClick={onToggleExpand}
@@ -182,30 +158,31 @@ export function LogEntry({
         </div>
       </div>
       {isExpanded && (
-        <div className="px-1 pb-1 border-white/5 pt-1">
-          {log.type.toLowerCase() === 'eloquent_model' ? (
-            <EloquentModelDisplay
-              content={log.content}
-              logId={log.id}
-              expandedItems={expandedItems}
-              onToggleItem={onToggleItem}
-              borderClass={levelStyles.border}
-            />
-          ) : log.type.toLowerCase() === 'executed_query' ? (
-            <ExecutedQueryDisplay content={log.content} borderClass={levelStyles.border} />
-          ) : log.type.toLowerCase() === 'mailable' ? (
-            <MailableDisplay content={log.content} borderClass={levelStyles.border} />
-          ) : isArrayContent(log.content as string[]) ? (
-            <CollapsibleArray
-              logId={log.id}
-              content={log.content}
-              expandedItems={expandedItems}
-              onToggleItem={onToggleItem}
-            />
-          ) : (
-            <SimpleLogDisplay content={log.content} borderClass={levelStyles.border} />
-          )}
-        </div>
+        <LogStyleProvider borderClass={levelStyles.border} textClass={levelStyles.text}>
+          <div className="px-1 pb-1 border-white/5 pt-1">
+            {log.type.toLowerCase() === 'eloquent_model' ? (
+              <EloquentModelDisplay
+                content={log.content}
+                logId={log.id}
+                expandedItems={expandedItems}
+                onToggleItem={onToggleItem}
+              />
+            ) : log.type.toLowerCase() === 'executed_query' ? (
+              <ExecutedQueryDisplay content={log.content} />
+            ) : log.type.toLowerCase() === 'mailable' ? (
+              <MailableDisplay content={log.content} />
+            ) : isArrayContent(log.content as string[]) ? (
+              <CollapsibleArray
+                logId={log.id}
+                content={log.content}
+                expandedItems={expandedItems}
+                onToggleItem={onToggleItem}
+              />
+            ) : (
+              <SimpleLogDisplay content={log.content} />
+            )}
+          </div>
+        </LogStyleProvider>
       )}
     </div>
   )

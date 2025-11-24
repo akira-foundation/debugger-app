@@ -1,14 +1,15 @@
-import { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 import { SyntaxHighlighter } from '../utils/syntax'
+import { useLogStyle } from '../context/LogStyleContext'
+import { useCopyToClipboard } from '../hooks/useCopyToClipboard'
 
 interface ExecutedQueryDisplayProps {
   content: string[]
-  borderClass?: string
 }
 
-export function ExecutedQueryDisplay({ content, borderClass = 'border-white/10' }: ExecutedQueryDisplayProps) {
-  const [copied, setCopied] = useState(false)
+export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
+  const { borderClass } = useLogStyle()
+  const { copied, copy } = useCopyToClipboard()
 
   let connectionName = ''
   let sql = ''
@@ -51,14 +52,8 @@ export function ExecutedQueryDisplay({ content, borderClass = 'border-white/10' 
 
   const formattedSql = formatSql(sql)
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(sql)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy:', err)
-    }
+  const handleCopy = () => {
+    copy(sql)
   }
 
   return (

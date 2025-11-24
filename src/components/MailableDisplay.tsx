@@ -1,14 +1,15 @@
-import { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 import { SyntaxHighlighter } from '../utils/syntax'
+import { useLogStyle } from '../context/LogStyleContext'
+import { useCopyToClipboard } from '../hooks/useCopyToClipboard'
 
 interface MailableDisplayProps {
   content: string[]
-  borderClass?: string
 }
 
-export function MailableDisplay({ content, borderClass = 'border-white/10' }: MailableDisplayProps) {
-  const [copied, setCopied] = useState(false)
+export function MailableDisplay({ content }: MailableDisplayProps) {
+  const { borderClass } = useLogStyle()
+  const { copied, copy } = useCopyToClipboard()
 
   let mailData: any = {}
 
@@ -29,14 +30,8 @@ export function MailableDisplay({ content, borderClass = 'border-white/10' }: Ma
   const subject = mailData.subject || 'No Subject'
   const html = mailData.html || ''
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(html.replace(/\\n/g, '\n'))
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error('Failed to copy:', err)
-    }
+  const handleCopy = () => {
+    copy(html.replace(/\\n/g, '\n'))
   }
 
   const formatAddresses = (addresses: any[]) => {
