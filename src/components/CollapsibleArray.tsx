@@ -49,19 +49,20 @@ export function CollapsibleArray({
         return (
           <div key={item.index}>
             {/* Item header with toggle button */}
-            <div className="w-full flex items-center gap-2 px-4 py-1.5 hover:bg-white/5 transition-colors group">
+            <div className="w-full flex items-center  px-4 py-2.5 hover:bg-white/5 transition-colors group overflow-x-auto">
+              {hasDetails && (
+                <button
+                  onClick={() => onToggleItem(logId, item.index)}
+                  className={`${textClass} group-hover:opacity-70 flex-shrink-0 transition-opacity cursor-pointer`}
+                >
+                  {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                </button>
+              )}
               <button
                 onClick={() => onToggleItem(logId, item.index)}
-                className="flex items-center flex-1 text-left cursor-pointer"
+                className="flex-1 text-left cursor-pointer text-gray-300 whitespace-nowrap -ml-4"
               >
-                {hasDetails && (
-                  <span className={`${textClass} group-hover:opacity-70 flex-shrink-0 transition-opacity `}>
-                    {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                  </span>
-                )}
-                <span className="flex-1 overflow-x-auto text-gray-300 -ml-4 ">
-                  <SyntaxHighlighter text={item.lines[0]} />
-                </span>
+                <SyntaxHighlighter text={item.lines[0]} />
               </button>
               <button
                 onClick={handleItemCopy}
@@ -78,11 +79,11 @@ export function CollapsibleArray({
 
             {/* Expanded content */}
             {isExpanded && hasDetails && (
-              <div className="py-3 space-y-0 border-t border-white/10">
+              <div className="px-4 py-3 space-y-0 border-t border-white/10 overflow-x-auto">
                 {item.lines.slice(1).map((line, idx) => (
                   <div
                     key={idx}
-                    className="text-[12px] overflow-x-auto text-dracula-foreground py-1"
+                    className="text-[12px] text-dracula-foreground py-1 whitespace-nowrap"
                   >
                     <SyntaxHighlighter text={line} />
                   </div>
