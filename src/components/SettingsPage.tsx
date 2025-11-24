@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeft, ChevronDown } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { CachedLicenseValidation } from '../types/license'
 import { backendLicenseService } from '../services/backendLicenseService'
 import { getInstalledEditors, getPreferredEditor, savePreferredEditor, EditorInfo } from '../services/editorService'
@@ -26,17 +26,7 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
   const [trialStartDate, setTrialStartDate] = useState<Date | null>(null)
   const [installedEditors, setInstalledEditors] = useState<EditorInfo[]>([])
   const [preferredEditorId, setPreferredEditorId] = useState<string>('phpstorm')
-  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
-    license: true,
-    preferences: true,
-  })
-
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section],
-    }))
-  }
+  const [activeTab, setActiveTab] = useState<'license' | 'preferences'>('license')
 
   useEffect(() => {
     const loadTrialInfo = async () => {
@@ -116,12 +106,34 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
         <h1 className="text-lg font-bold">Settings</h1>
       </div>
 
-      {/* Content - Single Column Layout */}
-      <div className="flex-1 overflow-auto  h-screen  ">
-        <div className="max-w-2xl space-y-6 p-2 mx-auto ">
-          {/* License Section */}
-          <div className="space-y-4 mt-4">
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-2">License</div>
+      {/* Tabs */}
+      <div className="flex gap-8 px-4 py-3 border-white/10 flex-shrink-0">
+        <button
+          onClick={() => setActiveTab('license')}
+          className={`text-sm font-medium transition-colors ${
+            activeTab === 'license'
+              ? 'text-white border-b-2 border-purple-500 -mb-3 pb-3'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          License
+        </button>
+        <button
+          onClick={() => setActiveTab('preferences')}
+          className={`text-sm font-medium transition-colors ${
+            activeTab === 'preferences'
+              ? 'text-white border-b-2 border-purple-500 -mb-3 pb-3'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          Preferences
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-2xl space-y-4 p-4 mx-auto">
+          {activeTab === 'license' && (
             <div className="space-y-4">
               <TrialSection
                 isTrialActive={isTrialActive}
@@ -138,11 +150,9 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
                 onValidationRefresh={onValidationRefresh}
               />
             </div>
-          </div>
+          )}
 
-          {/* Preferences Section */}
-          <div className="space-y-4">
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-2">Preferences</div>
+          {activeTab === 'preferences' && (
             <div className="space-y-4">
               <EditorSection
                 installedEditors={installedEditors}
@@ -155,7 +165,7 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
 
               <LogDisplaySection />
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
