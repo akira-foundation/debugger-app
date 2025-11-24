@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Lock, Settings } from 'lucide-react'
 import { CachedLicenseValidation } from '../types/license'
 import { backendLicenseService } from '../services/backendLicenseService'
 import { getInstalledEditors, getPreferredEditor, savePreferredEditor, EditorInfo } from '../services/editorService'
@@ -107,23 +107,23 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
       </header>
 
       {/* Tabs */}
-      <div className="flex border-b border-white/10 px-6 flex-shrink-0">
+      <div className="flex gap-6 px-4 py-3 flex-shrink-0">
         <button
           onClick={() => setActiveTab('license')}
-          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`text-sm font-medium transition-colors pb-1 border-b-2 ${
             activeTab === 'license'
-              ? 'border-purple-500 text-gray-200'
-              : 'border-transparent text-gray-500 hover:text-gray-300'
+              ? 'text-gray-100 border-purple-500'
+              : 'text-gray-500 border-transparent hover:text-gray-400'
           }`}
         >
           License
         </button>
         <button
           onClick={() => setActiveTab('preferences')}
-          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+          className={`text-sm font-medium transition-colors pb-1 border-b-2 ${
             activeTab === 'preferences'
-              ? 'border-purple-500 text-gray-200'
-              : 'border-transparent text-gray-500 hover:text-gray-300'
+              ? 'text-gray-100 border-purple-500'
+              : 'text-gray-500 border-transparent hover:text-gray-400'
           }`}
         >
           Preferences
@@ -131,8 +131,8 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto px-2 py-8">
-        <div className="max-w-2xl">
+      <div className="flex-1 overflow-auto px-4 py-6">
+        <div className="max-w-2xl space-y-4">
           {/* License Tab */}
           {activeTab === 'license' && (
             <div className="space-y-4">

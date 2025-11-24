@@ -30,7 +30,6 @@ export function LogBorderSection() {
     <SettingsCard title="Log Border Style" subtitle="Customize the appearance of log entry borders">
       <div className="space-y-5">
         <div className="space-y-3">
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">Border Mode</label>
           <div className="flex gap-2">
             <button
               onClick={() => handleModeChange('multicolor')}
