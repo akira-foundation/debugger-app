@@ -8,6 +8,7 @@ import { LicenseStatusSection } from './settings/LicenseStatusSection'
 import { LicenseKeySection } from './settings/LicenseKeySection'
 import { EditorSection } from './settings/EditorSection'
 import { LogBorderSection } from './settings/LogBorderSection'
+import { LogDisplaySection } from './settings/LogDisplaySection'
 
 interface SettingsPageProps {
   onBack: () => void
@@ -130,6 +131,8 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
           />
 
           <LogBorderSection />
+
+          <LogDisplaySection />
         </div>
       </div>
     </div>

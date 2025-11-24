@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ChevronRight, ChevronDown, Copy, Check } from 'lucide-react'
 import { ExpandedItems } from '../types'
 import { parseArrayItems } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { useLogStyle } from '../context/LogStyleContext'
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard'
+import { getLogDisplayConfig } from '../services/logDisplayConfigService'
 
 interface CollapsibleArrayProps {
   logId: string
@@ -21,29 +22,50 @@ export function CollapsibleArray({
 }: CollapsibleArrayProps) {
   const { borderClass, textClass } = useLogStyle()
   const { copied, copy } = useCopyToClipboard()
-  // Se content é uma única linha com \n, faz split
-  const contentLines = content.length === 1 && content[0].includes('\n')
-    ? content[0].split('\n')
-    : content
+  const [copiedItemIndex, setCopiedItemIndex] = React.useState<string | null>(null)
 
-  const items = parseArrayItems(contentLines)
+  // Se content é uma única linha com \n, faz split
+  const contentLines = useMemo(() => {
+    const lines = content.length === 1 && content[0].includes('\n')
+      ? content[0].split('\n')
+      : content
+    console.log(`CollapsibleArray: content.length=${content.length}, contentLines.length=${lines.length}`)
+    return lines
+  }, [content])
+
+  const items = useMemo(() => {
+    const parsed = parseArrayItems(contentLines)
+    console.log(`CollapsibleArray.items: Parsed ${parsed.length} items from ${contentLines.length} contentLines`)
+    return parsed
+  }, [contentLines])
+  const config = getLogDisplayConfig()
+  const ITEMS_PER_PAGE = config.itemsPerLog
+  const [displayedCount, setDisplayedCount] = React.useState(() => Math.min(ITEMS_PER_PAGE, items.length))
   const logExpandedItems = expandedItems[logId] || new Set<string>()
-  const contentText = contentLines.join('\n')
+  const contentText = useMemo(() => contentLines.join('\n'), [contentLines])
+  const visibleItems = useMemo(() => items.slice(0, displayedCount), [items, displayedCount])
+  const hasMoreItems = displayedCount < items.length
+
+  React.useEffect(() => {
+    console.log(`CollapsibleArray.displayedCount updated: ${displayedCount}, items.length: ${items.length}, hasMoreItems: ${hasMoreItems}`)
+  }, [displayedCount, items.length, hasMoreItems])
+
 
   return (
-    <div className={`rounded-lg overflow-hidden border ${borderClass}`}>
+    <div className={`rounded-lg border ${borderClass}`}>
       {/* Array items inside single card */}
-      {items.map((item, itemIdx) => {
+      <div className="overflow-hidden">
+        {items.slice(0, displayedCount).map((item, itemIdx) => {
         const isExpanded = logExpandedItems.has(item.index)
         const hasDetails = item.lines.length > 1
-        const isLastItem = itemIdx === items.length - 1
+        const isLastVisibleItem = itemIdx === displayedCount - 1
         const itemText = item.lines.join('\n')
-        const [itemCopied, setItemCopied] = React.useState(false)
+        const isItemCopied = copiedItemIndex === item.index
 
         const handleItemCopy = () => {
           copy(itemText)
-          setItemCopied(true)
-          setTimeout(() => setItemCopied(false), 2000)
+          setCopiedItemIndex(item.index)
+          setTimeout(() => setCopiedItemIndex(null), 2000)
         }
 
         return (
@@ -69,7 +91,7 @@ export function CollapsibleArray({
                 className="p-1 rounded hover:bg-white/5 transition-colors flex-shrink-0"
                 title="Copy item"
               >
-                {itemCopied ? (
+                {isItemCopied ? (
                   <Check size={14} className="text-green-400" />
                 ) : (
                   <Copy size={14} className="text-gray-400" />
@@ -92,10 +114,31 @@ export function CollapsibleArray({
             )}
 
             {/* Divider between items */}
-            {!isLastItem && <div className="border-t border-white/10"></div>}
+            {!isLastVisibleItem && <div className="border-t border-white/10"></div>}
           </div>
         )
-      })}
+        })}
+      </div>
+
+      {/* Show more button */}
+      {hasMoreItems && (
+        <button
+          onClick={() => {
+            try {
+              setDisplayedCount(prev => {
+                const newCount = prev + ITEMS_PER_PAGE
+                return newCount > items.length ? items.length : newCount
+              })
+            } catch (e) {
+              console.error('Error loading more items:', e)
+            }
+          }}
+          className="w-full px-4 py-2 text-sm text-gray-400 hover:text-gray-300 hover:bg-white/5 transition-colors border-t border-white/10 text-left"
+        >
+          <div className="font-medium text-sm">Showing {displayedCount} of {items.length} items</div>
+          <div className="text-xs text-gray-500 mt-0.5">+ Load {Math.min(ITEMS_PER_PAGE, items.length - displayedCount)} more</div>
+        </button>
+      )}
     </div>
   )
 }

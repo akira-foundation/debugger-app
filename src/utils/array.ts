@@ -18,6 +18,17 @@ export function isEloquentModel(content: string[]): boolean {
 
 export function parseArrayItems(content: string[]): Array<{ index: string; lines: string[] }> {
   const items: Array<{ index: string; lines: string[] }> = []
+  let matchCount = 0
+
+  // Log first 20 lines to understand the format
+  if (content.length > 5) {
+    console.log('parseArrayItems: First 20 lines of content:')
+    for (let i = 0; i < Math.min(20, content.length); i++) {
+      const line = content[i]
+      const hasMatch = /^(\s+)(\d+)\s+=>/.test(line)
+      console.log(`  [${i}] ${hasMatch ? '✓' : ' '} ${JSON.stringify(line.substring(0, 80))}`)
+    }
+  }
 
   for (let i = 1; i < content.length; i++) {
     const line = content[i]
@@ -25,6 +36,7 @@ export function parseArrayItems(content: string[]): Array<{ index: string; lines
     const itemMatch = line.match(/^(\s+)(\d+)\s+=>/)
 
     if (itemMatch) {
+      matchCount++
       // Remove trailing opening bracket, curly braces, and hash references from first line
       const cleanedLine = line.replace(/\s+[\[\{].*$/, '').replace(/\s+\{#\d+\}\s*$/, '')
       const itemLines = [cleanedLine]
@@ -55,6 +67,11 @@ export function parseArrayItems(content: string[]): Array<{ index: string; lines
         lines: itemLines,
       })
     }
+  }
+
+  console.log(`parseArrayItems: Found ${matchCount} items with pattern, returning ${items.length} items from ${content.length} lines`)
+  if (matchCount > 0 && matchCount !== items.length) {
+    console.warn(`parseArrayItems: Item count mismatch! Pattern matched ${matchCount} times but only ${items.length} items returned`)
   }
 
   return items
