@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { rayColors } from '../../types'
 import type { LogBorderMode, RayColor } from '../../types'
 import { getLogBorderConfig, setLogBorderMode, setLogBorderUnifiedColor } from '../../services/logBorderConfigService'
+import { SettingsCard } from './SettingsCard'
 
 export function LogBorderSection() {
   const [mode, setMode] = useState<LogBorderMode>('multicolor')
@@ -26,13 +27,8 @@ export function LogBorderSection() {
   }
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Log Border Style</h2>
-        <div className="h-px flex-1 bg-white/5"></div>
-      </div>
-
-      <div className="rounded-xl p-6 bg-gradient-to-br from-white/2 to-transparent border border-white/10 backdrop-blur-sm space-y-5">
+    <SettingsCard title="Log Border Style" subtitle="Customize the appearance of log entry borders">
+      <div className="space-y-5">
         <div className="space-y-3">
           <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">Border Mode</label>
           <div className="flex gap-2">
@@ -79,6 +75,6 @@ export function LogBorderSection() {
           </div>
         )}
       </div>
-    </section>
+    </SettingsCard>
   )
 }

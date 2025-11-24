@@ -1,3 +1,5 @@
+import { SettingsCard } from './SettingsCard'
+
 interface TrialSectionProps {
   isTrialActive: boolean
   trialDaysRemaining: number
@@ -12,14 +14,8 @@ export function TrialSection({
   if (!isTrialActive) return null
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Trial Status</h2>
-        <div className="h-px flex-1 bg-white/5"></div>
-      </div>
-
-      <div className="rounded-xl p-6 bg-gradient-to-br from-yellow-500/5 via-yellow-500/2 to-transparent border border-yellow-500/20 backdrop-blur-sm">
-        <div className="space-y-3">
+    <SettingsCard title="Trial Status" subtitle="Your trial license information and remaining days">
+      <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-400">Status</span>
             <div className="flex items-center gap-2">
@@ -45,8 +41,7 @@ export function TrialSection({
               </span>
             </div>
           )}
-        </div>
       </div>
-    </section>
+    </SettingsCard>
   )
 }

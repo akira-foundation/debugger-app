@@ -104,7 +104,7 @@ export function LogEntry({
       </div>
       {isExpanded && (
         <LogStyleProvider borderClass={levelStyles.border} textClass={levelStyles.text}>
-          <div className="px-1 pb-1 border-white/5 pt-1">
+          <div className="px-0.5 pb-0.5 border-white/5 pt-1">
             <LogTypeRouter
               log={log}
               expandedItems={expandedItems}

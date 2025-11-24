@@ -1,4 +1,5 @@
 import { EditorInfo } from '../../services/editorService'
+import { SettingsCard } from './SettingsCard'
 
 interface EditorSectionProps {
   installedEditors: EditorInfo[]
@@ -14,18 +15,10 @@ export function EditorSection({
   onEditorChange,
 }: EditorSectionProps) {
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Editor Settings</h2>
-        <div className="h-px flex-1 bg-white/5"></div>
-      </div>
-
-      <div className="rounded-xl p-6 bg-gradient-to-br from-white/2 to-transparent border border-white/10 backdrop-blur-sm space-y-5">
-        <p className="text-xs text-gray-500">Supported editors are detected automatically on your system</p>
-
+    <SettingsCard title="Preferred Editor" subtitle="Supported editors are detected automatically on your system">
+      <div className="space-y-5">
         {installedEditors.length > 0 ? (
           <div className="space-y-4">
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">Preferred Editor</label>
             <div className="flex flex-wrap gap-2">
               {installedEditors.map((editor) => (
                 <button
@@ -62,6 +55,6 @@ export function EditorSection({
           </div>
         )}
       </div>
-    </section>
+    </SettingsCard>
   )
 }

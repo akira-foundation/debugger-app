@@ -1,4 +1,5 @@
 import { CachedLicenseValidation, LicenseStatus } from '../../types/license'
+import { SettingsCard } from './SettingsCard'
 
 interface LicenseStatusSectionProps {
   validation: CachedLicenseValidation | null
@@ -38,14 +39,8 @@ export function LicenseStatusSection({ validation }: LicenseStatusSectionProps) 
   }
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">License Status</h2>
-        <div className="h-px flex-1 bg-white/5"></div>
-      </div>
-
-      <div className={`rounded-xl p-6 border backdrop-blur-sm ${getStatusBg(validation.license.status)}`}>
-        <div className="space-y-3">
+    <SettingsCard title="License Status" subtitle="Your current license information and validity">
+      <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-400">Status</span>
             <span className={`text-sm font-semibold ${getStatusColor(validation.license.status)}`}>
@@ -101,8 +96,7 @@ export function LicenseStatusSection({ validation }: LicenseStatusSectionProps) 
               {new Date(validation.validatedAt).toLocaleDateString()} at {new Date(validation.validatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
-        </div>
       </div>
-    </section>
+    </SettingsCard>
   )
 }

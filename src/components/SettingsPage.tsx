@@ -20,12 +20,13 @@ interface SettingsPageProps {
 export function SettingsPage({ onBack, validation, onValidationRefresh }: SettingsPageProps) {
   const [licenseKey, setLicenseKey] = useState('')
   const [isSaving, setIsSaving] = useState(false)
-  const [editorMessage, setEditorMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [editorMessage, setEditorMessage] = useState<{ type: 'supccess' | 'error'; text: string } | null>(null)
   const [isTrialActive, setIsTrialActive] = useState(false)
   const [trialDaysRemaining, setTrialDaysRemaining] = useState(0)
   const [trialStartDate, setTrialStartDate] = useState<Date | null>(null)
   const [installedEditors, setInstalledEditors] = useState<EditorInfo[]>([])
   const [preferredEditorId, setPreferredEditorId] = useState<string>('phpstorm')
+  const [activeTab, setActiveTab] = useState<'license' | 'preferences'>('license')
 
   useEffect(() => {
     const loadTrialInfo = async () => {
@@ -94,7 +95,7 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] text-white font-sans">
       {/* Header */}
-      <header className="flex items-center gap-4 px-4 py-4 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
+      <header className="flex items-center gap-4 px-2 py-5 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a2e] to-[#0f0f0f] border-b border-white/5 flex-shrink-0">
         <button
           onClick={onBack}
           className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-gray-200"
@@ -105,34 +106,68 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
         <h1 className="text-lg font-semibold tracking-tight">License & Settings</h1>
       </header>
 
+      {/* Tabs */}
+      <div className="flex border-b border-white/10 px-6 flex-shrink-0">
+        <button
+          onClick={() => setActiveTab('license')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'license'
+              ? 'border-purple-500 text-gray-200'
+              : 'border-transparent text-gray-500 hover:text-gray-300'
+          }`}
+        >
+          License
+        </button>
+        <button
+          onClick={() => setActiveTab('preferences')}
+          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'preferences'
+              ? 'border-purple-500 text-gray-200'
+              : 'border-transparent text-gray-500 hover:text-gray-300'
+          }`}
+        >
+          Preferences
+        </button>
+      </div>
+
       {/* Content */}
-      <div className="flex-1 overflow-auto px-4 py-8">
-        <div className="max-w-3xl space-y-8">
-          <TrialSection
-            isTrialActive={isTrialActive}
-            trialDaysRemaining={trialDaysRemaining}
-            trialStartDate={trialStartDate}
-          />
+      <div className="flex-1 overflow-auto px-2 py-8">
+        <div className="max-w-2xl">
+          {/* License Tab */}
+          {activeTab === 'license' && (
+            <div className="space-y-4">
+              <TrialSection
+                isTrialActive={isTrialActive}
+                trialDaysRemaining={trialDaysRemaining}
+                trialStartDate={trialStartDate}
+              />
 
-          <LicenseStatusSection validation={validation} />
+              <LicenseStatusSection validation={validation} />
 
-          <LicenseKeySection
-            licenseKey={licenseKey}
-            isSaving={isSaving}
-            onLicenseKeyChange={handleLicenseKeyChange}
-            onValidationRefresh={onValidationRefresh}
-          />
+              <LicenseKeySection
+                licenseKey={licenseKey}
+                isSaving={isSaving}
+                onLicenseKeyChange={handleLicenseKeyChange}
+                onValidationRefresh={onValidationRefresh}
+              />
+            </div>
+          )}
 
-          <EditorSection
-            installedEditors={installedEditors}
-            preferredEditorId={preferredEditorId}
-            message={editorMessage}
-            onEditorChange={handleEditorChange}
-          />
+          {/* Preferences Tab */}
+          {activeTab === 'preferences' && (
+            <div className="space-y-4">
+              <EditorSection
+                installedEditors={installedEditors}
+                preferredEditorId={preferredEditorId}
+                message={editorMessage}
+                onEditorChange={handleEditorChange}
+              />
 
-          <LogBorderSection />
+              <LogBorderSection />
 
-          <LogDisplaySection />
+              <LogDisplaySection />
+            </div>
+          )}
         </div>
       </div>
     </div>
