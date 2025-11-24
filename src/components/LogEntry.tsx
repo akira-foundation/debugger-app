@@ -1,16 +1,11 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { ChevronRight, ChevronDown } from 'lucide-react'
-import { LogEntry as LogEntryType, ExpandedItems, logTypes } from '../types'
-import { isArrayContent } from '../utils/array'
-import { CollapsibleArray } from './CollapsibleArray'
-import { EloquentModelDisplay } from './EloquentModelDisplay'
-import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
-import { MailableDisplay } from './MailableDisplay'
-import { SimpleLogDisplay } from './SimpleLogDisplay'
+import { LogEntry as LogEntryType, ExpandedItems } from '../types'
 import { getPreferredEditor } from '../services/editorService'
-import { getLogBorderConfig } from '../services/logBorderConfigService'
 import { LogStyleProvider } from '../context/LogStyleContext'
+import { LogTypeRouter } from './LogTypeRouter'
+import { getLevelStyles, getLabelColorStyles } from '../utils/styles'
 
 interface LogEntryProps {
   log: LogEntryType
@@ -22,56 +17,6 @@ interface LogEntryProps {
   getLogTypeColor: (type: string) => string
 }
 
-const colorStyleMap: Record<string, { border: string; dot: string; text: string }> = {
-  purple: { border: 'border-purple-500/30', dot: 'bg-purple-500', text: 'text-purple-400' },
-  red: { border: 'border-red-500/30', dot: 'bg-red-500', text: 'text-red-400' },
-  orange: { border: 'border-orange-500/30', dot: 'bg-orange-500', text: 'text-orange-400' },
-  yellow: { border: 'border-yellow-500/30', dot: 'bg-yellow-500', text: 'text-yellow-400' },
-  green: { border: 'border-green-500/30', dot: 'bg-green-500', text: 'text-green-400' },
-  blue: { border: 'border-blue-500/30', dot: 'bg-blue-500', text: 'text-blue-400' },
-  cyan: { border: 'border-cyan-500/30', dot: 'bg-cyan-500', text: 'text-cyan-400' },
-  pink: { border: 'border-pink-500/30', dot: 'bg-pink-500', text: 'text-pink-400' },
-}
-
-function getLevelStyles(type: string): { border: string; dot: string; text: string } {
-  const config = getLogBorderConfig()
-  const logType = logTypes[type.toLowerCase() as keyof typeof logTypes]
-
-  if (config.mode === 'unified' && config.unifiedColor && config.unifiedColor in colorStyleMap) {
-    return colorStyleMap[config.unifiedColor]
-  }
-
-  if (logType) {
-    return {
-      border: logType.border,
-      dot: logType.dot,
-      text: logType.color,
-    }
-  }
-
-  return {
-    border: 'border-emerald-500/30',
-    dot: 'bg-emerald-500',
-    text: 'text-emerald-400',
-  }
-}
-
-function getLabelColorStyles(logColor: string | undefined) {
-  const colorMap: Record<string, { border: string; text: string; bg: string }> = {
-    default: { border: 'border-gray-600/50', text: 'text-gray-300', bg: 'bg-gray-600/10' },
-    purple: { border: 'border-purple-500/50', text: 'text-purple-300', bg: 'bg-purple-500/10' },
-    red: { border: 'border-red-500/50', text: 'text-red-300', bg: 'bg-red-500/10' },
-    orange: { border: 'border-orange-500/50', text: 'text-orange-300', bg: 'bg-orange-500/10' },
-    yellow: { border: 'border-yellow-500/50', text: 'text-yellow-300', bg: 'bg-yellow-500/10' },
-    green: { border: 'border-green-500/50', text: 'text-green-300', bg: 'bg-green-500/10' },
-    blue: { border: 'border-blue-500/50', text: 'text-blue-300', bg: 'bg-blue-500/10' },
-    cyan: { border: 'border-cyan-500/50', text: 'text-cyan-300', bg: 'bg-cyan-500/10' },
-    pink: { border: 'border-pink-500/50', text: 'text-pink-300', bg: 'bg-pink-500/10' },
-  }
-
-  const color = logColor || 'default'
-  return colorMap[color] || colorMap['default']
-}
 
 export function LogEntry({
   log,
@@ -160,27 +105,11 @@ export function LogEntry({
       {isExpanded && (
         <LogStyleProvider borderClass={levelStyles.border} textClass={levelStyles.text}>
           <div className="px-1 pb-1 border-white/5 pt-1">
-            {log.type.toLowerCase() === 'eloquent_model' ? (
-              <EloquentModelDisplay
-                content={log.content}
-                logId={log.id}
-                expandedItems={expandedItems}
-                onToggleItem={onToggleItem}
-              />
-            ) : log.type.toLowerCase() === 'executed_query' ? (
-              <ExecutedQueryDisplay content={log.content} />
-            ) : log.type.toLowerCase() === 'mailable' ? (
-              <MailableDisplay content={log.content} />
-            ) : isArrayContent(log.content as string[]) ? (
-              <CollapsibleArray
-                logId={log.id}
-                content={log.content}
-                expandedItems={expandedItems}
-                onToggleItem={onToggleItem}
-              />
-            ) : (
-              <SimpleLogDisplay content={log.content} />
-            )}
+            <LogTypeRouter
+              log={log}
+              expandedItems={expandedItems}
+              onToggleItem={onToggleItem}
+            />
           </div>
         </LogStyleProvider>
       )}
