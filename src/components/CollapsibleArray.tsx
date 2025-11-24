@@ -25,17 +25,15 @@ export function CollapsibleArray({
   const logExpandedItems = expandedItems[logId] || new Set<string>()
 
   return (
-    <div className="space-y-2">
-      {/* Array items - clean display without header/closing brackets */}
-      {items.map((item) => {
+    <div className="rounded-lg overflow-hidden border border-white/10">
+      {/* Array items inside single card */}
+      {items.map((item, itemIdx) => {
         const isExpanded = logExpandedItems.has(item.index)
         const hasDetails = item.lines.length > 1
+        const isLastItem = itemIdx === items.length - 1
 
         return (
-          <div
-            key={item.index}
-            className="rounded-lg transition-all overflow-hidden border border-white/10"
-          >
+          <div key={item.index}>
             {/* Item header with toggle button */}
             <button
               onClick={() => onToggleItem(logId, item.index)}
@@ -64,6 +62,9 @@ export function CollapsibleArray({
                 ))}
               </div>
             )}
+
+            {/* Divider between items */}
+            {!isLastItem && <div className="border-t border-white/10"></div>}
           </div>
         )
       })}

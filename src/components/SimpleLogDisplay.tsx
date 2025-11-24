@@ -2,13 +2,14 @@ import { SyntaxHighlighter } from '../utils/syntax'
 
 interface SimpleLogDisplayProps {
   content: string[]
+  borderClass?: string
 }
 
-export function SimpleLogDisplay({ content }: SimpleLogDisplayProps) {
+export function SimpleLogDisplay({ content, borderClass = 'border-white/10' }: SimpleLogDisplayProps) {
   return (
-    <div className="rounded-lg overflow-hidden border border-white/10">
-      <div className="px-4 py-3">
-        <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+    <div className={`rounded-lg overflow-hidden border ${borderClass}`}>
+      <div className="px-4 py-3 overflow-x-auto">
+        <div className="whitespace-pre-wrap break-words font-mono text-xs text-gray-200">
           {content.map((line, idx) => (
             <div key={idx}>
               <SyntaxHighlighter text={line} />

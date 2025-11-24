@@ -4,9 +4,10 @@ import { SyntaxHighlighter } from '../utils/syntax'
 
 interface MailableDisplayProps {
   content: string[]
+  borderClass?: string
 }
 
-export function MailableDisplay({ content }: MailableDisplayProps) {
+export function MailableDisplay({ content, borderClass = 'border-white/10' }: MailableDisplayProps) {
   const [copied, setCopied] = useState(false)
 
   let mailData: any = {}
@@ -47,7 +48,7 @@ export function MailableDisplay({ content }: MailableDisplayProps) {
   }
 
   return (
-    <div className="rounded-lg overflow-hidden border border-white/10">
+    <div className={`rounded-lg overflow-hidden border ${borderClass}`}>
       {/* Header with Recipients and Copy Button */}
       <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between">
         <div className="text-xs space-y-1">
@@ -81,8 +82,8 @@ export function MailableDisplay({ content }: MailableDisplayProps) {
 
       {/* HTML Content */}
       {html && (
-        <div className="px-4 py-3">
-          <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+        <div className="px-4 py-3 overflow-x-auto">
+          <div className="whitespace-pre-wrap break-words font-mono text-xs text-gray-200">
             <SyntaxHighlighter text={html.replace(/\\n/g, '\n').replace(/\\t/g, '\t')} />
           </div>
         </div>

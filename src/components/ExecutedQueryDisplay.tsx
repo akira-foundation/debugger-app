@@ -4,9 +4,10 @@ import { SyntaxHighlighter } from '../utils/syntax'
 
 interface ExecutedQueryDisplayProps {
   content: string[]
+  borderClass?: string
 }
 
-export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
+export function ExecutedQueryDisplay({ content, borderClass = 'border-white/10' }: ExecutedQueryDisplayProps) {
   const [copied, setCopied] = useState(false)
 
   let connectionName = ''
@@ -61,7 +62,7 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
   }
 
   return (
-    <div className="rounded-lg overflow-hidden border border-white/10">
+    <div className={`rounded-lg overflow-hidden border ${borderClass}`}>
       {/* Header with Connection and Time Info */}
       <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between">
         <div className="text-xs space-y-1">
@@ -84,8 +85,8 @@ export function ExecutedQueryDisplay({ content }: ExecutedQueryDisplayProps) {
       </div>
 
       {/* SQL Content */}
-      <div className="px-4 py-3">
-        <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+      <div className="px-4 py-3 overflow-x-auto">
+        <div className="whitespace-pre-wrap break-words font-mono text-xs text-gray-200">
           <SyntaxHighlighter text={formattedSql} />
         </div>
       </div>

@@ -8,13 +8,15 @@ interface EloquentModelDisplayProps {
   logId?: string
   expandedItems?: ExpandedItems
   onToggleItem?: (logId: string, itemIndex: string) => void
+  borderClass?: string
 }
 
 export function EloquentModelDisplay({
   content,
   logId = '',
   expandedItems = {},
-  onToggleItem = () => {}
+  onToggleItem = () => {},
+  borderClass = 'border-white/10'
 }: EloquentModelDisplayProps) {
   const [isAttributesExpanded, setIsAttributesExpanded] = useState(true)
 
@@ -62,7 +64,7 @@ export function EloquentModelDisplay({
   }
 
   return (
-    <div className="rounded-lg overflow-hidden border border-white/10">
+    <div className={`rounded-lg overflow-hidden border ${borderClass}`}>
       {/* Header with Class Name */}
       {className && (
         <div className="px-4 py-2 border-b border-white/5">
@@ -74,8 +76,8 @@ export function EloquentModelDisplay({
 
       {/* Attributes Section */}
       {attributeLines.length > 0 && (
-        <div className="px-4 py-3">
-          <div className="px-3 py-2 rounded overflow-x-auto whitespace-pre-wrap break-words font-mono text-xs">
+        <div className="px-4 py-3 overflow-x-auto">
+          <div className="whitespace-pre-wrap break-words font-mono text-xs text-gray-200">
             {attributeLines.map((line, idx) => (
               <div key={idx}>
                 <SyntaxHighlighter text={line} />

@@ -189,11 +189,12 @@ export function LogEntry({
               logId={log.id}
               expandedItems={expandedItems}
               onToggleItem={onToggleItem}
+              borderClass={levelStyles.border}
             />
           ) : log.type.toLowerCase() === 'executed_query' ? (
-            <ExecutedQueryDisplay content={log.content} />
+            <ExecutedQueryDisplay content={log.content} borderClass={levelStyles.border} />
           ) : log.type.toLowerCase() === 'mailable' ? (
-            <MailableDisplay content={log.content} />
+            <MailableDisplay content={log.content} borderClass={levelStyles.border} />
           ) : isArrayContent(log.content as string[]) ? (
             <CollapsibleArray
               logId={log.id}
@@ -202,7 +203,7 @@ export function LogEntry({
               onToggleItem={onToggleItem}
             />
           ) : (
-            <SimpleLogDisplay content={log.content} />
+            <SimpleLogDisplay content={log.content} borderClass={levelStyles.border} />
           )}
         </div>
       )}
