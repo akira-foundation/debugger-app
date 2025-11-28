@@ -26,10 +26,8 @@ export function LogTypeRouter({ log, expandedItems, onToggleItem }: LogTypeRoute
     try {
       const cleanedContent = log.content[0].replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
       const data = JSON.parse(cleanedContent)
-      console.log('🔥 Table data:', data)
       return <TableDisplay data={data} />
     } catch (e) {
-      console.error('Failed to parse table data:', e)
       return <SimpleLogDisplay content={log.content} />
     }
   }
