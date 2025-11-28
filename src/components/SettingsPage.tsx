@@ -9,6 +9,7 @@ import { LicenseKeySection } from './settings/LicenseKeySection'
 import { EditorSection } from './settings/EditorSection'
 import { LogBorderSection } from './settings/LogBorderSection'
 import { LogDisplaySection } from './settings/LogDisplaySection'
+import { SupportSection } from './settings/SupportSection'
 
 interface SettingsPageProps {
   onBack: () => void
@@ -26,7 +27,7 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
   const [trialStartDate, setTrialStartDate] = useState<Date | null>(null)
   const [installedEditors, setInstalledEditors] = useState<EditorInfo[]>([])
   const [preferredEditorId, setPreferredEditorId] = useState<string>('phpstorm')
-  const [activeTab, setActiveTab] = useState<'license' | 'preferences'>('license')
+  const [activeTab, setActiveTab] = useState<'license' | 'preferences' | 'support'>('license')
 
   useEffect(() => {
     const loadTrialInfo = async () => {
@@ -128,6 +129,16 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
         >
           Preferences
         </button>
+        <button
+          onClick={() => setActiveTab('support')}
+          className={`text-sm font-medium transition-colors ${
+            activeTab === 'support'
+              ? 'text-white border-b-2 border-purple-500 -mb-3 pb-3'
+              : 'text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          Support
+        </button>
       </div>
 
       {/* Content */}
@@ -164,6 +175,12 @@ export function SettingsPage({ onBack, validation, onValidationRefresh }: Settin
               <LogBorderSection />
 
               <LogDisplaySection />
+            </div>
+          )}
+
+          {activeTab === 'support' && (
+            <div className="space-y-4">
+              <SupportSection />
             </div>
           )}
         </div>
