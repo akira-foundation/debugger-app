@@ -14,8 +14,47 @@ interface PropertyRowProps {
   level?: number
 }
 
+function isArrayOfObjects(value: any): boolean {
+  if (!Array.isArray(value) || value.length === 0) return false
+  return value.every(item => item !== null && typeof item === 'object' && !Array.isArray(item))
+}
+
+function TableView({ data }: { data: any[] }) {
+  if (data.length === 0) return null
+  
+  const columns = Array.from(new Set(data.flatMap(obj => Object.keys(obj))))
+  
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-white/10">
+            {columns.map(col => (
+              <th key={col} className="px-3 py-2 text-left text-gray-400 font-medium">
+                {col}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, idx) => (
+            <tr key={idx} className="border-b border-white/5 hover:bg-white/5">
+              {columns.map(col => (
+                <td key={col} className="px-3 py-2 text-gray-200 font-mono">
+                  <SyntaxHighlighter text={String(row[col] ?? '')} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 function PropertyRow({ name, value, level = 0 }: PropertyRowProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [viewMode, setViewMode] = useState<'tree' | 'table'>('tree')
 
   const formatValue = (val: any): string => {
     if (val === null) return 'null'
@@ -36,6 +75,7 @@ function PropertyRow({ name, value, level = 0 }: PropertyRowProps) {
   }
 
   const expandable = isExpandable(value)
+  const canShowTable = Array.isArray(value) && isArrayOfObjects(value)
 
   if (expandable) {
     const entries = Array.isArray(value) 
@@ -52,7 +92,20 @@ function PropertyRow({ name, value, level = 0 }: PropertyRowProps) {
             {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
           </button>
           <div className="flex-1 min-w-0">
-            <div className="text-gray-400 text-xs font-medium mb-1">{name}</div>
+            <div className="flex items-center gap-2">
+              <div className="text-gray-400 text-xs font-medium">{name}</div>
+              {canShowTable && isExpanded && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setViewMode(viewMode === 'tree' ? 'table' : 'tree')
+                  }}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-gray-400"
+                >
+                  {viewMode === 'tree' ? 'Table' : 'Tree'}
+                </button>
+              )}
+            </div>
             {!isExpanded && (
               <div className="text-gray-500 text-xs truncate">
                 {Array.isArray(value) ? `Array(${value.length})` : `Object {${Object.keys(value).length}}`}
@@ -61,10 +114,16 @@ function PropertyRow({ name, value, level = 0 }: PropertyRowProps) {
           </div>
         </div>
         {isExpanded && (
-          <div className="ml-8 border-l-2 border-white/10">
-            {entries.map(([key, val]: [string, any]) => (
-              <PropertyRow key={key} name={key} value={val} level={level + 1} />
-            ))}
+          <div className="ml-8">
+            {canShowTable && viewMode === 'table' ? (
+              <TableView data={value} />
+            ) : (
+              <div className="border-l-2 border-white/10">
+                {entries.map(([key, val]: [string, any]) => (
+                  <PropertyRow key={key} name={key} value={val} level={level + 1} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -99,6 +158,21 @@ export function EventDisplay({ content }: EventDisplayProps) {
       
       if (data.payload && typeof data.payload === 'object') {
         eventData = data.payload
+        
+        // Check if payload has array of similar objects that should be grouped
+        const values = Object.values(eventData)
+        if (values.length > 1 && 
+            values.every(v => v && typeof v === 'object' && !Array.isArray(v))) {
+          // Check if all objects have similar structure
+          const keys = values.map(v => Object.keys(v as object).sort().join(','))
+          const allSame = keys.every(k => k === keys[0])
+          
+          if (allSame) {
+            // Group into an array for table view
+            const groupedKey = Object.keys(eventData)[0]
+            eventData = { [groupedKey]: values }
+          }
+        }
       }
     } catch (e) {
       // Silently fail
@@ -148,10 +222,39 @@ export function EventDisplay({ content }: EventDisplayProps) {
           )}
         </button>
       </div>
-      <div>
-        {Object.entries(eventData).map(([key, value]) => (
-          <PropertyRow key={key} name={key} value={value} />
-        ))}
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-white/10">
+              <th className="px-4 py-3 text-left text-gray-400 font-medium w-1/4">Key</th>
+              <th className="px-4 py-3 text-left text-gray-400 font-medium">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(eventData).map(([key, value]) => {
+              const formatValue = (val: any): string => {
+                if (val === null) return 'null'
+                if (val === undefined) return 'undefined'
+                if (typeof val === 'boolean') return val.toString()
+                if (typeof val === 'string') return val
+                if (typeof val === 'number') return val.toString()
+                if (typeof val === 'object') {
+                  return JSON.stringify(val, null, 2)
+                }
+                return String(val)
+              }
+
+              return (
+                <tr key={key} className="border-b border-white/5 hover:bg-white/5">
+                  <td className="px-4 py-3 text-gray-400 font-medium align-top">{key}</td>
+                  <td className="px-4 py-3 text-gray-200 font-mono align-top break-words">
+                    <SyntaxHighlighter text={formatValue(value)} />
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   )
