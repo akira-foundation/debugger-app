@@ -112,9 +112,8 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
 
       {/* Second row: Log Type Filter */}
       <div className="flex gap-1 items-center px-6 py-1.5 border-t border-white/5 overflow-x-auto justify-between">
-        <div className="flex gap-1 items-center overflow-x-auto">
-          <span className="text-[10px] text-gray-500 font-medium flex-shrink-0">Type:</span>
-        {(['log', 'eloquent_model', 'executed_query', 'mailable', 'application_log'] as const).map((type) => {
+        <div className="flex gap-1 items-center overflow-x-auto flex-1">
+        {(['eloquent_model', 'executed_query', 'mailable', 'application_log', 'event', 'table'] as const).map((type) => {
           const config = logTypes[type]
           return (
             <button
@@ -135,7 +134,7 @@ export function Header({ isListening, onClear, isPinned, onTogglePin, isSearchOp
         <button
           onClick={onToggleAllLogs}
           title={areAllLogsExpanded ? 'Collapse all logs' : 'Expand all logs'}
-          className="p-1 rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-200 transition-all cursor-pointer flex-shrink-0"
+          className="p-1 rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-200 transition-all cursor-pointer flex-shrink-0 mr-2"
         >
           {areAllLogsExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
         </button>

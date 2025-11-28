@@ -7,6 +7,7 @@ import { MailableDisplay } from './MailableDisplay'
 import { CollapsibleArray } from './CollapsibleArray'
 import { SimpleLogDisplay } from './SimpleLogDisplay'
 import { EventDisplay } from './EventDisplay'
+import { TableDisplay } from './TableDisplay'
 
 interface LogTypeRouterProps {
   log: LogEntry
@@ -19,6 +20,18 @@ export function LogTypeRouter({ log, expandedItems, onToggleItem }: LogTypeRoute
 
   if (logType === 'event') {
     return <EventDisplay content={log.content} />
+  }
+
+  if (logType === 'table') {
+    try {
+      const cleanedContent = log.content[0].replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+      const data = JSON.parse(cleanedContent)
+      console.log('🔥 Table data:', data)
+      return <TableDisplay data={data} />
+    } catch (e) {
+      console.error('Failed to parse table data:', e)
+      return <SimpleLogDisplay content={log.content} />
+    }
   }
 
   if (logType === 'eloquent_model') {

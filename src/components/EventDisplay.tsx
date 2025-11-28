@@ -108,7 +108,7 @@ function PropertyRow({ name, value, level = 0 }: PropertyRowProps) {
             </div>
             {!isExpanded && (
               <div className="text-gray-500 text-xs truncate">
-                {Array.isArray(value) ? `Array(${value.length})` : `Object {${Object.keys(value).length}}`}
+                {Array.isArray(value) ? `Array(${value.length})` : `Object (${Object.keys(value).length})`}
               </div>
             )}
           </div>
