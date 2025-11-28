@@ -51,7 +51,7 @@ export default function App() {
   }, [])
 
   // Show splash screen during validation, or if validation fails allow to continue
-  const handleValidationComplete = (validation: any) => {
+  const handleValidationComplete = () => {
     setLicenseValidationComplete(true)
   }
 

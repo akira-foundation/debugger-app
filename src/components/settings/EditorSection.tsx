@@ -1,5 +1,6 @@
 import { EditorInfo } from '../../services/editorService'
 import { SettingsCard } from './SettingsCard'
+import { SettingsButton } from './SettingsButton'
 
 interface EditorSectionProps {
   installedEditors: EditorInfo[]
@@ -21,17 +22,13 @@ export function EditorSection({
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
               {installedEditors.map((editor) => (
-                <button
+                <SettingsButton
                   key={editor.id}
                   onClick={() => onEditorChange(editor.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
-                    preferredEditorId === editor.id
-                      ? 'bg-gradient-to-r from-purple-600 to-purple-700 border border-purple-500 text-white shadow-lg shadow-purple-500/30'
-                      : 'bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/30 text-purple-300 hover:from-purple-500/20 hover:to-purple-600/20 hover:border-purple-500/50'
-                  }`}
+                  isActive={preferredEditorId === editor.id}
                 >
                   {editor.name}
-                </button>
+                </SettingsButton>
               ))}
             </div>
 

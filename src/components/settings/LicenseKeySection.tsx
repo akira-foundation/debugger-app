@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core'
 import { backendLicenseService } from '../../services/backendLicenseService'
 import { SettingsCard } from './SettingsCard'
+import { SettingsButton } from './SettingsButton'
 
 interface LicenseKeySectionProps {
   licenseKey: string
@@ -46,12 +47,12 @@ export function LicenseKeySection({
             <li>Paste it in the field below</li>
           </ol>
         </div>
-        <button
+        <SettingsButton
           onClick={handleOpenLoginPage}
-          className="w-full px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer shadow-lg shadow-purple-500/20"
+          variant="primary"
         >
           Open Account
-        </button>
+        </SettingsButton>
 
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">License Key</label>
