@@ -1,6 +1,6 @@
 export type RayColor = 'default' | 'purple' | 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'cyan' | 'pink'
 
-export type LogType = 'log' | 'eloquent_model' | 'executed_query' | 'mailable' | 'application_log' | 'info' | 'debug' | 'warning' | 'error'
+export type LogType = 'log' | 'eloquent_model' | 'executed_query' | 'mailable' | 'application_log' | 'event' | 'info' | 'debug' | 'warning' | 'error'
 
 export type LogBorderMode = 'multicolor' | 'unified'
 
@@ -42,6 +42,7 @@ export const logTypes: Record<LogType, { label: string; color: string; border: s
   executed_query: { label: 'Query', color: 'text-blue-400', border: 'border-blue-500/30', dot: 'bg-blue-500' },
   mailable: { label: 'Mail', color: 'text-pink-400', border: 'border-pink-500/30', dot: 'bg-pink-500' },
   application_log: { label: 'Application', color: 'text-green-400', border: 'border-green-500/30', dot: 'bg-green-500' },
+  event: { label: 'Event', color: 'text-teal-400', border: 'border-teal-500/30', dot: 'bg-teal-500' },
   info: { label: 'Info', color: 'text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
   debug: { label: 'Debug', color: 'text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
   warning: { label: 'Warning', color: 'text-yellow-400', border: 'border-yellow-500/30', dot: 'bg-yellow-500' },

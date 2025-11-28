@@ -6,6 +6,7 @@ import { ExecutedQueryDisplay } from './ExecutedQueryDisplay'
 import { MailableDisplay } from './MailableDisplay'
 import { CollapsibleArray } from './CollapsibleArray'
 import { SimpleLogDisplay } from './SimpleLogDisplay'
+import { EventDisplay } from './EventDisplay'
 
 interface LogTypeRouterProps {
   log: LogEntry
@@ -15,6 +16,10 @@ interface LogTypeRouterProps {
 
 export function LogTypeRouter({ log, expandedItems, onToggleItem }: LogTypeRouterProps) {
   const logType = log.type.toLowerCase()
+
+  if (logType === 'event') {
+    return <EventDisplay content={log.content} />
+  }
 
   if (logType === 'eloquent_model') {
     return (
