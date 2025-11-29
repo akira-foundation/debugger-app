@@ -1,15 +1,25 @@
+import { invoke } from '@tauri-apps/api/core'
 import { SettingsCard } from './SettingsCard'
 
 export function SupportSection() {
+  const openEmail = async (subject: string) => {
+    const url = `mailto:kidiatoliny@gmail.com?subject=${encodeURIComponent(subject)}`
+    try {
+      await invoke('open_url', { url })
+    } catch (e) {
+      console.error('Failed to open email client:', e)
+    }
+  }
+
   return (
     <SettingsCard
       title="Support"
       subtitle="Report bugs, request features, or ask for help."
     >
       <div className="grid sm:grid-cols-3 gap-2 text-xs">
-        <a href="mailto:support@akira.app?subject=Bug%20Report" className="px-3 py-2 rounded bg-white/5 hover:bg-white/10 text-gray-200 text-center">Report a bug</a>
-        <a href="mailto:support@akira.app?subject=Feature%20Request" className="px-3 py-2 rounded bg-white/5 hover:bg-white/10 text-gray-200 text-center">Suggest a feature</a>
-        <a href="mailto:support@akira.app?subject=Help%20Request" className="px-3 py-2 rounded bg-white/5 hover:bg-white/10 text-gray-200 text-center">Get help</a>
+        <button onClick={() => openEmail('Bug Report')} className="px-3 py-2 rounded bg-white/5 hover:bg-white/10 text-gray-200 text-center cursor-pointer">Report a bug</button>
+        <button onClick={() => openEmail('Feature Request')} className="px-3 py-2 rounded bg-white/5 hover:bg-white/10 text-gray-200 text-center cursor-pointer">Suggest a feature</button>
+        <button onClick={() => openEmail('Help Request')} className="px-3 py-2 rounded bg-white/5 hover:bg-white/10 text-gray-200 text-center cursor-pointer">Get help</button>
       </div>
     </SettingsCard>
   )
