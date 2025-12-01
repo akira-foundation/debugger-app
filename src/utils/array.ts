@@ -20,20 +20,10 @@ export function parseArrayItems(content: string[]): Array<{ index: string; lines
   const items: Array<{ index: string; lines: string[] }> = []
   let matchCount = 0
 
-  // Log first 20 lines to understand the format
-  if (content.length > 5) {
-    console.log('parseArrayItems: First 20 lines of content:')
-    for (let i = 0; i < Math.min(20, content.length); i++) {
-      const line = content[i]
-      const hasMatch = /^(\s+)(\d+)\s+=>/.test(line)
-      console.log(`  [${i}] ${hasMatch ? '✓' : ' '} ${JSON.stringify(line.substring(0, 80))}`)
-    }
-  }
-
   for (let i = 1; i < content.length; i++) {
     const line = content[i]
-    // Match: "  0 => array:3 [" or "  0 => App\Model"
-    const itemMatch = line.match(/^(\s+)(\d+)\s+=>/)
+    // Match both numeric and string keys: "  0 => " or "  "key" => "
+    const itemMatch = line.match(/^(\s+)(?:(\d+)|"([^"]+)")\s+=>/)
 
     if (itemMatch) {
       matchCount++
@@ -41,6 +31,7 @@ export function parseArrayItems(content: string[]): Array<{ index: string; lines
       const cleanedLine = line.replace(/\s+[\[\{].*$/, '').replace(/\s+\{#\d+\}\s*$/, '')
       const itemLines = [cleanedLine]
       const itemIndent = itemMatch[1].length
+      const itemKey = itemMatch[2] || itemMatch[3] // numeric or string key
 
       // Collect all following lines until we find the next item at same indent level
       i++
@@ -48,7 +39,7 @@ export function parseArrayItems(content: string[]): Array<{ index: string; lines
         const nextLine = content[i]
 
         // Check if this line is a new item (same pattern at same indentation)
-        const nextItemMatch = nextLine.match(/^(\s+)(\d+)\s+=>/)
+        const nextItemMatch = nextLine.match(/^(\s+)(?:(\d+)|"([^"]+)")\s+=>/)
         if (nextItemMatch && nextItemMatch[1].length === itemIndent) {
           i-- // Back up so outer loop processes this line
           break
@@ -63,15 +54,10 @@ export function parseArrayItems(content: string[]): Array<{ index: string; lines
       }
 
       items.push({
-        index: itemMatch[2],
+        index: itemKey,
         lines: itemLines,
       })
     }
-  }
-
-  console.log(`parseArrayItems: Found ${matchCount} items with pattern, returning ${items.length} items from ${content.length} lines`)
-  if (matchCount > 0 && matchCount !== items.length) {
-    console.warn(`parseArrayItems: Item count mismatch! Pattern matched ${matchCount} times but only ${items.length} items returned`)
   }
 
   return items
