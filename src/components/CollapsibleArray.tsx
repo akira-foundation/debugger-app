@@ -5,7 +5,7 @@ import { parseArrayItems } from '../utils/array'
 import { SyntaxHighlighter } from '../utils/syntax'
 import { useLogStyle } from '../context/LogStyleContext'
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard'
-import { getLogDisplayConfig } from '../services/logDisplayConfigService'
+import { useLogDisplayStore } from '../stores/logDisplayStore'
 
 interface CollapsibleArrayProps {
   logId: string
@@ -38,8 +38,7 @@ export function CollapsibleArray({
     console.log(`CollapsibleArray.items: Parsed ${parsed.length} items from ${contentLines.length} contentLines`)
     return parsed
   }, [contentLines])
-  const config = getLogDisplayConfig()
-  const ITEMS_PER_PAGE = config.itemsPerLog
+  const ITEMS_PER_PAGE = useLogDisplayStore((state) => state.config.itemsPerLog)
   const [displayedCount, setDisplayedCount] = React.useState(() => Math.min(ITEMS_PER_PAGE, items.length))
   const logExpandedItems = expandedItems[logId] || new Set<string>()
   const contentText = useMemo(() => contentLines.join('\n'), [contentLines])
