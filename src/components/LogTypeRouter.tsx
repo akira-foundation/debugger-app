@@ -8,6 +8,7 @@ import { CollapsibleArray } from './CollapsibleArray'
 import { SimpleLogDisplay } from './SimpleLogDisplay'
 import { EventDisplay } from './EventDisplay'
 import { TableDisplay } from './TableDisplay'
+import { ExceptionDisplay } from './ExceptionDisplay'
 
 interface LogTypeRouterProps {
   log: LogEntry
@@ -17,6 +18,10 @@ interface LogTypeRouterProps {
 
 export function LogTypeRouter({ log, expandedItems, onToggleItem }: LogTypeRouterProps) {
   const logType = log.type.toLowerCase()
+
+  if (logType === 'exception') {
+    return <ExceptionDisplay content={log.content} />
+  }
 
   if (logType === 'event') {
     return <EventDisplay content={log.content} />
