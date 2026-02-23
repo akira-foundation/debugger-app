@@ -140,13 +140,27 @@ export function LicenseSplash({ onValidationComplete, onOpenSettings }: LicenseS
           <div className="  rounded-lg px-5 py-4 w-80 text-center space-y-3">
 
             {trialWasUsed ? (
-              <button
-                onClick={onOpenSettings}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors text-sm cursor-pointer"
-              >
-                <Settings size={16} />
-                Configure License
-              </button>
+              <div className="space-y-2.5">
+                <button
+                  onClick={onOpenSettings}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors text-sm cursor-pointer"
+                >
+                  <Settings size={16} />
+                  Configure License
+                </button>
+
+                <button
+                  onClick={async () => {
+                    if (confirm('Reset trial? This is for dev purposes only.')) {
+                      await backendLicenseService.clearTrial()
+                      window.location.reload()
+                    }
+                  }}
+                  className="w-full px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-300 font-medium rounded-lg transition-colors text-sm cursor-pointer"
+                >
+                  Reset Trial (Dev)
+                </button>
+              </div>
             ) : (
               <div className="space-y-2.5">
                 <button
