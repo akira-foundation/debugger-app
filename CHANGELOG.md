@@ -1,5 +1,61 @@
 
 
+# [0.5.0](https://github.com/debugger-akira-io-com/desktop-app/compare/0.4.0...0.5.0) (2026-02-24)
+
+
+### Bug Fixes
+
+* remove macOS specific configuration from tauri settings ([1049d65](https://github.com/debugger-akira-io-com/desktop-app/commit/1049d656e683dd77f16810fec9dda96ad3754e40))
+* remove quotes from URL in build-and-release.yml for consistency ([c528d22](https://github.com/debugger-akira-io-com/desktop-app/commit/c528d225441f105a4f8de4f1b2f4d100a49817bb))
+* remove unnecessary build arguments for macOS in CI configuration ([e341e1b](https://github.com/debugger-akira-io-com/desktop-app/commit/e341e1b8e75e8d6b3159d07450de7da3cc49f126))
+* rename test build job to clarify its purpose ([84ed001](https://github.com/debugger-akira-io-com/desktop-app/commit/84ed0011d1df9e5956bc28e9d00a5624306aa026))
+* update download URLs for macOS and Linux in build configurations ([0d41086](https://github.com/debugger-akira-io-com/desktop-app/commit/0d41086763b261b37e916397ef83f179babd8a6a))
+* update footer component to use APP_VERSION from version file ([98a9dfa](https://github.com/debugger-akira-io-com/desktop-app/commit/98a9dfa3d1306f85cabdfdb64aced44c5a847909))
+* update S3 upload path for latest.json in test build configuration ([e3416f3](https://github.com/debugger-akira-io-com/desktop-app/commit/e3416f3da983298804d24967be0272669cedf47d))
+* URL encode filename in test upload to handle spaces correctly ([642a69e](https://github.com/debugger-akira-io-com/desktop-app/commit/642a69e76cc9386a978fa745ea5f14d20243fa7b))
+
+
+### Features
+
+* add 'application_log' type to log filtering and update log types definition ([7c6ab0e](https://github.com/debugger-akira-io-com/desktop-app/commit/7c6ab0e2b5fadc9643145154d6ce7e1d66a21106))
+* add border class customization to log display components ([9111618](https://github.com/debugger-akira-io-com/desktop-app/commit/911161809a0b107f241ecb393df4d847a37ee255))
+* add environment variables for Digital Ocean Spaces upload authentication ([8ff74ef](https://github.com/debugger-akira-io-com/desktop-app/commit/8ff74ef1571def75b7c0b750737f9bba946d581b))
+* add EventDisplay and TableDisplay components for enhanced log visualization ([56ac8b2](https://github.com/debugger-akira-io-com/desktop-app/commit/56ac8b2058c1a8c19cd985224cf8c6ad2ef7d027))
+* add ExceptionDisplay component to handle exception log types ([c22d819](https://github.com/debugger-akira-io-com/desktop-app/commit/c22d819c9b6920f83b57b161ee3784a4ebd4801b))
+* add functionality to expand/collapse all logs in the log display ([08b0209](https://github.com/debugger-akira-io-com/desktop-app/commit/08b020902e60c56ce1583280ffd0e8e255649224))
+* add log type filtering functionality in header and log list ([c977111](https://github.com/debugger-akira-io-com/desktop-app/commit/c977111325ca14fe4a7138561d79d83ab30a7568))
+* add macOS icon format to tauri configuration ([cc9c74c](https://github.com/debugger-akira-io-com/desktop-app/commit/cc9c74cb5cd29a49acd87a863df1c30224cc95b7))
+* add settings page with license and editor management sections ([df06ac7](https://github.com/debugger-akira-io-com/desktop-app/commit/df06ac77cc4aa9b0dba4f99462feb71d78881d94))
+* add SupportSection component and integrate support tab in SettingsPage ([5fe1953](https://github.com/debugger-akira-io-com/desktop-app/commit/5fe1953182a8b45f551ddcb26f640f03f64b272e))
+* add TableDisplay component and enhance LogTypeRouter for table log handling ([b520e26](https://github.com/debugger-akira-io-com/desktop-app/commit/b520e26b2447e5931d0a54b1097029520da4ee52))
+* add TableDisplay component and enhance LogTypeRouter for table log handling ([ec5fe29](https://github.com/debugger-akira-io-com/desktop-app/commit/ec5fe29fcfc1ee3052aca2846e8cf79ace76e994))
+* enhance array parsing to support both numeric and string keys ([66cf0b3](https://github.com/debugger-akira-io-com/desktop-app/commit/66cf0b3c380b971870da1999640295bd0149743e))
+* enhance build and release workflow with version handling and test upload ([baf8785](https://github.com/debugger-akira-io-com/desktop-app/commit/baf8785e5675c0b3dd3b670aeeb6cf40e96050ec))
+* enhance EventDisplay with table view for array of objects and improved data formatting ([5817c35](https://github.com/debugger-akira-io-com/desktop-app/commit/5817c351db09aee4703e154b23a39015ad07fac0))
+* enhance layout and styling of Settings components for improved user experience ([bbb42b1](https://github.com/debugger-akira-io-com/desktop-app/commit/bbb42b185d7fef865f9e64169438b45c99c8d2a8))
+* enhance log display components with copy functionality and style context ([e0463f3](https://github.com/debugger-akira-io-com/desktop-app/commit/e0463f3e69931e843ed30bba6923ee66bf05612c))
+* enhance log entry and mailable display components with improved layout and functionality ([53f5715](https://github.com/debugger-akira-io-com/desktop-app/commit/53f5715ded5506d8db1705d84c4dc2f76f4493d3))
+* implement editor selection and management functionality ([b4630ad](https://github.com/debugger-akira-io-com/desktop-app/commit/b4630adb1a93b603c852a1d28c0e8da237e0566e))
+* implement log border configuration and management section in settings ([d639b4b](https://github.com/debugger-akira-io-com/desktop-app/commit/d639b4b39a14474fbdc80168b73498966fbd06ad))
+* implement log display configuration and enhance CollapsibleArray with load more functionality ([7cf8955](https://github.com/debugger-akira-io-com/desktop-app/commit/7cf895536134b365fa9200876206fcf08c88f82d))
+* implement tab navigation for License and Preferences sections in SettingsPage ([4f711b7](https://github.com/debugger-akira-io-com/desktop-app/commit/4f711b7cee5772f6597b8964067e2ba73d964238))
+* implement upload process for macOS and Windows artifacts to Digital Ocean Spaces ([dab36e6](https://github.com/debugger-akira-io-com/desktop-app/commit/dab36e6c346c7f393af19788b95e5f57428a781b))
+* improve CollapsibleArray component with enhanced styling and button functionality ([49e9e4d](https://github.com/debugger-akira-io-com/desktop-app/commit/49e9e4dd5d3dd20bd394d91e1b192d22270625c4))
+* introduce SettingsButton component and refactor button usage in various sections ([85a9f66](https://github.com/debugger-akira-io-com/desktop-app/commit/85a9f6637acc50b6376fb0839cc5438a0f49479a))
+* introduce SettingsCard component and refactor sections for improved layout and styling ([516e894](https://github.com/debugger-akira-io-com/desktop-app/commit/516e894f1702487858f40589e71add5910bab5a7))
+* introduce SimpleLogDisplay component for streamlined log content rendering ([a70c6c5](https://github.com/debugger-akira-io-com/desktop-app/commit/a70c6c51e905947a015ac8f77eddb7793c449904))
+* refactor log display configuration to use Zustand store for state management ([b327edd](https://github.com/debugger-akira-io-com/desktop-app/commit/b327edd920296ba0c1c68f1dbb207aaddd3a0a6c))
+* refactor log entry header to improve expand/collapse functionality ([79b5989](https://github.com/debugger-akira-io-com/desktop-app/commit/79b598953511f3444b9a34554d9c987880bfac97))
+* refactor log entry rendering and introduce filter context for enhanced log management ([2051b14](https://github.com/debugger-akira-io-com/desktop-app/commit/2051b1416d50464694adbd467cde3d71a53c8857))
+* refactor SettingsCard and SettingsPage components for improved layout and styling ([c45290e](https://github.com/debugger-akira-io-com/desktop-app/commit/c45290e6a0200ef5f1059a35769a859ddeecb2ea))
+* refine layout of SettingsCard component for improved spacing and styling ([211eb18](https://github.com/debugger-akira-io-com/desktop-app/commit/211eb18c389458b44dbc00ec663dd6f97cc44bc7))
+* replace text indicators with icons for expandable log entries ([37bf9b4](https://github.com/debugger-akira-io-com/desktop-app/commit/37bf9b4b8acc5816e2c5bc26649beea2ffab2486))
+* sync version in Cargo.toml and update icon formats in tauri.conf.json ([d8ee863](https://github.com/debugger-akira-io-com/desktop-app/commit/d8ee863c9ef11477a3cccda3a265f81671c64553))
+* update build configuration for macOS to support multiple architectures ([c6c7af6](https://github.com/debugger-akira-io-com/desktop-app/commit/c6c7af66db4255b7a14f3bf65a5b9b6e0cd92e6f))
+* update macOS build configuration to use universal binaries ([048067a](https://github.com/debugger-akira-io-com/desktop-app/commit/048067ad67b2c26da8200d2c7d3a60d3448b4102))
+* update SupportSection to use buttons for email actions and improve email handling ([1f8220f](https://github.com/debugger-akira-io-com/desktop-app/commit/1f8220f065d05f1c52c06aaefd2cbeda40e8274c))
+* update test upload process to use AWS CLI for Digital Ocean Spaces ([14a0637](https://github.com/debugger-akira-io-com/desktop-app/commit/14a0637fe09a4513d3475ee16a3580de832da502))
+
 # [0.4.0](https://github.com/debugger-akira-io-com/desktop-app/compare/0.3.3...0.4.0) (2025-11-22)
 
 
